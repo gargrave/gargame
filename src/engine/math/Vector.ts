@@ -1,14 +1,17 @@
 export default class Vector {
-  x: number
-  y: number
+  private _x: number
+  private _y: number
 
   constructor(x: number, y: number) {
-    this.x = x
-    this.y = y
+    this._x = x
+    this._y = y
   }
 
-  translate(x: number, y: number) {
-    this.x += x
-    this.y += y
+  get x() { return this._x } // prettier-ignore
+  get y() { return this._y } // prettier-ignore
+
+  translate(dx: number, dy: number) {
+    this._x += dx
+    this._y += dy
   }
 }
