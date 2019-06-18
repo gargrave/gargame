@@ -1,6 +1,11 @@
 export default class Game {
   private running = false
   private lastUpdate = 0
+  private ctx: CanvasRenderingContext2D
+
+  constructor(ctx: CanvasRenderingContext2D) {
+    this.ctx = ctx
+  }
 
   mainLoop = () => {
     const now = Date.now()
@@ -8,7 +13,7 @@ export default class Game {
     this.lastUpdate = now
 
     this.update(dt)
-    this.render(dt)
+    this.render(this.ctx, dt)
 
     if (this.running) {
       requestAnimationFrame(this.mainLoop)
@@ -30,7 +35,9 @@ export default class Game {
     console.log(`Game -> update(): ${dt}`)
   }
 
-  render(dt: number) {
+  render(ctx: CanvasRenderingContext2D, dt: number) {
     console.log(`Game -> render(): ${dt}`)
+    ctx.fillStyle = 'rgb(255, 0, 0)'
+    ctx.fillRect(10, 10, 24, 24)
   }
 }
