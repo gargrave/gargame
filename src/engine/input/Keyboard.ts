@@ -10,14 +10,10 @@ export default class Keyboard implements Updateable {
   }
 
   onKeyDown = (e: KeyboardEvent) => {
-    // console.log('onKeyDown')
-    // console.log({ e })
     this.kbState[e.keyCode] = true
   }
 
   onKeyUp = (e: KeyboardEvent) => {
-    // console.log('onKeyUp')
-    // console.log({ e })
     this.kbState[e.keyCode] = false
   }
 

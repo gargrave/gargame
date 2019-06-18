@@ -13,7 +13,6 @@ export default class Game {
 
     console.log('Initializing game...')
     this.input = new Keyboard()
-    window.input = this.input
   }
 
   mainLoop = () => {
@@ -47,7 +46,6 @@ export default class Game {
   }
 
   update(dt: number) {
-    // console.log(`Game -> update(): ${dt}`)
     this.input.update(dt)
     for (const e of this.entities) {
       e.update(dt)
@@ -61,7 +59,6 @@ export default class Game {
 
   render(ctx: CanvasRenderingContext2D, dt: number) {
     ctx.clearRect(0, 0, 640, 480)
-    // console.log(`Game -> render(): ${dt}`)
     for (const e of this.entities) {
       e.draw(ctx, dt)
     }

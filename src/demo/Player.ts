@@ -6,11 +6,9 @@ const W = 87
 const S = 83
 
 export default class Player extends Entity {
-  private pos = { x: 10, y: 10 }
-
   constructor() {
     super()
-    this.speed = 200
+    this.speed = 300
   }
 
   update(dt: number) {
@@ -32,15 +30,12 @@ export default class Player extends Entity {
       vel.y += 1
     }
 
-    this.pos = {
-      x: this.pos.x + vel.x * this.speed * dt,
-      y: this.pos.y + vel.y * this.speed * dt,
-    }
+    this.pos.translate(vel.x * this.speed * dt, vel.y * this.speed * dt)
   }
 
   draw(ctx: CanvasRenderingContext2D, dt: number) {
     super.draw(ctx, dt)
     ctx.fillStyle = 'rgb(255, 0, 0)'
-    ctx.fillRect(this.pos.x, this.pos.y, 24, 24)
+    ctx.fillRect(this.pos.x, this.pos.y, 48, 48)
   }
 }
