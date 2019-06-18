@@ -16,11 +16,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": false,
     "strict": true,
-    "target": "esnext",
-    "paths": {
-      "@core": ["core"],
-      "@core/*": ["core/*"]
-    }
+    "target": "esnext"
   },
   "exclude": ["config"],
   "include": ["src"]
