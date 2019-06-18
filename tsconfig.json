@@ -1,0 +1,27 @@
+{
+  "baseUrl": "src",
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": false,
+    "jsx": "preserve",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": false,
+    "strict": true,
+    "target": "esnext",
+    "paths": {
+      "@core": ["core"],
+      "@core/*": ["core/*"]
+    }
+  },
+  "exclude": ["config"],
+  "include": ["src"]
+}
