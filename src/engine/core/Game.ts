@@ -13,6 +13,7 @@ export default class Game {
 
     console.log('Initializing game...')
     this.input = new Keyboard()
+    window.input = this.input
   }
 
   mainLoop = () => {

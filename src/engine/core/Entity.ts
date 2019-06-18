@@ -1,7 +1,7 @@
 import { Drawable, Updateable } from '../interfaces'
 import { Vector } from '../math'
 
-export default class Entity implements Drawable, Updateable {
+export default abstract class Entity implements Drawable, Updateable {
   protected _pos = new Vector(0, 0)
   protected _speed = 50
 
