@@ -1,8 +1,6 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-const APP_ROOT = '../'
-
 module.exports = {
   entry: './src/index.ts',
   output: {
@@ -12,9 +10,6 @@ module.exports = {
   //
   resolve: {
     extensions: ['.js', '.ts'],
-    alias: {
-      '@core': path.resolve(__dirname, APP_ROOT, 'src/core/'),
-    },
   },
   //
   module: {
@@ -24,9 +19,7 @@ module.exports = {
         include: /src/,
         use: {
           loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-          },
+          options: {},
         },
       },
     ],

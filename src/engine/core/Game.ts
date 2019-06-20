@@ -1,4 +1,4 @@
-import { Entity } from '.'
+import { Entity, Loader } from '.'
 import { Keyboard } from '../input'
 
 export default class Game {
@@ -14,6 +14,19 @@ export default class Game {
     console.log('Initializing game...')
     this.input = new Keyboard()
     window.input = this.input
+  }
+
+  async load(assets) {
+    const loader = new Loader(assets)
+    try {
+      console.log('Game -> Beginning load()')
+      await loader.loadAll()
+      console.log('Game -> Successful load()')
+      return true
+    } catch (e) {
+      console.log('Game -> Failure on load()')
+      return false
+    }
   }
 
   mainLoop = () => {
@@ -64,7 +77,6 @@ export default class Game {
   }
 
   render(ctx: CanvasRenderingContext2D, dt: number) {
-    // ctx.clearRect(0, 0, 640, 480)
     for (const e of this.entities) {
       e.draw(ctx, dt)
     }
