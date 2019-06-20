@@ -11,7 +11,12 @@ export default class Vector {
   get y() { return this._y } // prettier-ignore
 
   translate(dx: number, dy: number) {
-    this._x += dx
-    this._y += dy
+    this._x = Math.floor(this._x + dx)
+    this._y = Math.floor(this._y + dy)
+  }
+
+  copyFrom(other: Vector) {
+    this._x = other.x
+    this._y = other.y
   }
 }

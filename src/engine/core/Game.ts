@@ -47,6 +47,11 @@ export default class Game {
   }
 
   update(dt: number) {
+    this.input.earlyUpdate(dt)
+    for (const e of this.entities) {
+      e.earlyUpdate(dt)
+    }
+
     this.input.update(dt)
     for (const e of this.entities) {
       e.update(dt)
@@ -59,7 +64,7 @@ export default class Game {
   }
 
   render(ctx: CanvasRenderingContext2D, dt: number) {
-    ctx.clearRect(0, 0, 640, 480)
+    // ctx.clearRect(0, 0, 640, 480)
     for (const e of this.entities) {
       e.draw(ctx, dt)
     }

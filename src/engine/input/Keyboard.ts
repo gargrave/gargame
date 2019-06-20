@@ -17,6 +17,7 @@ export default class Keyboard implements Updateable {
     this.kbState[e.keyCode] = false
   }
 
+  earlyUpdate(dt: number) {}
   update(dt: number) {}
 
   lateUpdate(dt: number) {
