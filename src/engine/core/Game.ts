@@ -34,8 +34,9 @@ export default class Game {
     const dt = now - this.lastUpdate
     this.lastUpdate = now
 
-    this.update(dt / 1000.0)
-    this.render(this.ctx, dt)
+    this.update(dt)
+    // this.update(dt / 1000.0)
+    this.draw(this.ctx, dt)
 
     if (this.running) {
       requestAnimationFrame(this.mainLoop)
@@ -76,7 +77,7 @@ export default class Game {
     }
   }
 
-  render(ctx: CanvasRenderingContext2D, dt: number) {
+  draw(ctx: CanvasRenderingContext2D, dt: number) {
     for (const e of this.entities) {
       e.draw(ctx, dt)
     }

@@ -1,4 +1,4 @@
-import { Assets, Entity, Keyboard, Sprite, Texture } from '../engine'
+import { Animation, Assets, Entity, Keyboard, Sprite, Texture } from '../engine'
 
 const D = 68
 const A = 65
@@ -7,6 +7,7 @@ const S = 83
 
 export default class Player extends Entity {
   private sprite: Sprite
+  private anim: Animation
 
   constructor() {
     super()
@@ -17,6 +18,20 @@ export default class Player extends Entity {
       src: Assets.texture('player'),
       height: 66,
       width: 34,
+    })
+
+    const texture = Assets.texture('player')
+    const height = 66
+    const width = 34
+    const frameDuration = 100
+    // TODO: entities should be able to auto-update any arbitrary number of "children"
+    this.anim = new Animation(this, {
+      firstFrame: 1,
+      frameDuration,
+      height,
+      lastFrame: 2,
+      src: texture,
+      width,
     })
   }
 
@@ -40,11 +55,13 @@ export default class Player extends Entity {
     }
 
     this.pos.translate(vel.x * this.speed * dt, vel.y * this.speed * dt)
+    this.anim.update(dt)
   }
 
   draw(ctx: CanvasRenderingContext2D, dt: number) {
     super.draw(ctx, dt)
-    this.sprite.draw(ctx, dt)
+    // this.sprite.draw(ctx, dt)
+    this.anim.draw(ctx, dt)
     // ctx.fillStyle = 'rgb(255, 0, 0)'
     // ctx.fillRect(this.pos.x, this.pos.y, 48, 48)
     // ctx.clearRect(this.prevPos.x, this.prevPos.y, 34, 66)
