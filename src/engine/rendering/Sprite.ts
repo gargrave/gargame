@@ -25,7 +25,7 @@ export default class Sprite implements Drawable {
     this.imgY = config.y || 0
   }
 
-  draw(ctx: CanvasRenderingContext2D, dt: number) {
+  draw(ctx: CanvasRenderingContext2D) {
     const { pos, prevPos } = this.host
 
     ctx.clearRect(prevPos.x, prevPos.y, this.w, this.h)

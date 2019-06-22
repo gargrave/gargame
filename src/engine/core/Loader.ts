@@ -22,7 +22,8 @@ export default class Loader {
         const t = new Texture(path)
         t.load().then(() => {
           Assets.addTexture(key, t)
-          if (++loadedTextures === expectedTextures) {
+          loadedTextures += 1
+          if (loadedTextures === expectedTextures) {
             resolve(true)
           }
         })

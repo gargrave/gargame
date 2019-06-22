@@ -48,11 +48,10 @@ export default class Animation implements Drawable, Updateable {
 
   incrementFrame() {
     this.currentFrame = wrap(0, this.frames.length - 1, this.currentFrame + 1)
-    console.log({ currentFrame: this.currentFrame })
     this.currentFrameTime = 0
   }
 
-  earlyUpdate(dt: number) {}
+  earlyUpdate(_dt: number) {}
 
   update(dt: number) {
     if (!this.config.frameDuration) return

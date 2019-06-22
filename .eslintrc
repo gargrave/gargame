@@ -1,0 +1,62 @@
+{
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "rules": {
+    "arrow-body-style": 0,
+    "camelcase": 0,
+    "comma-dangle": ["warn", "always-multiline"],
+    "eqeqeq": "error",
+    "guard-for-in": "warn",
+    "lines-between-class-members": [
+      "warn",
+      "always",
+      { "exceptAfterSingleLine": true }
+    ],
+    "no-console": "warn",
+    "no-debugger": "warn",
+    "no-param-reassign": "warn",
+    "no-plusplus": "warn",
+    "no-restricted-syntax": ["warn", "ForInStatement"],
+    "no-unused-vars": 0,
+    "prefer-const": "warn",
+    "padding-line-between-statements": [
+      "warn",
+      { "blankLine": "always", "prev": "block-like", "next": "*" },
+      { "blankLine": "always", "prev": "multiline-expression", "next": "*" }
+    ],
+    "semi": ["warn", "never"],
+    "sort-keys": "warn",
+
+    "@typescript-eslint/array-type": "warn",
+    "@typescript-eslint/camelcase": "warn",
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/explicit-member-accessibility": 0,
+    "@typescript-eslint/no-object-literal-type-assertion": [
+      "warn",
+      { "allowAsParameter": true }
+    ],
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "@typescript-eslint/no-parameter-properties": 0,
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "args": "none", "varsIgnorePattern": "^_" }
+    ],
+    "@typescript-eslint/no-use-before-define": "warn",
+    "@typescript-eslint/prefer-interface": 0
+  }
+}

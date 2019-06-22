@@ -1,5 +1,6 @@
 import { Entity, Loader } from '.'
 import { Keyboard } from '../input'
+import { Log } from '../utils'
 
 export default class Game {
   private running = false
@@ -11,20 +12,20 @@ export default class Game {
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx
 
-    console.log('Initializing game...')
+    Log.info('Initializing game...')
     this.input = new Keyboard()
-    window.input = this.input
+    ;(window as any).input = this.input // eslint-disable-line
   }
 
   async load(assets) {
     const loader = new Loader(assets)
     try {
-      console.log('Game -> Beginning load()')
+      Log.info('Game -> Beginning load()')
       await loader.loadAll()
-      console.log('Game -> Successful load()')
+      Log.info('Game -> Successful load()')
       return true
     } catch (e) {
-      console.log('Game -> Failure on load()')
+      Log.info('Game -> Failure on load()')
       return false
     }
   }
@@ -45,14 +46,14 @@ export default class Game {
 
   start() {
     if (this.running) return
-    console.log('=== STARTING GAME LOOP ===')
+    Log.info('=== STARTING GAME LOOP ===')
     this.running = true
     requestAnimationFrame(this.mainLoop)
   }
 
   stop() {
     if (!this.running) return
-    console.log('=== STOPPING GAME LOOP ===')
+    Log.info('=== STOPPING GAME LOOP ===')
     this.running = false
   }
 

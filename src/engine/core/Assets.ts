@@ -15,7 +15,7 @@ const Assets = {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  ;(window as any).assets = _assets
+  ;(window as any).assets = _assets // eslint-disable-line
 }
 
 export default Assets

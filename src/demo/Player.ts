@@ -1,4 +1,4 @@
-import { Animation, Assets, Entity, Keyboard, Sprite, Texture } from '../engine'
+import { Animation, Assets, Entity, Keyboard } from '../engine'
 
 const D = 68
 const A = 65
@@ -6,7 +6,7 @@ const W = 87
 const S = 83
 
 export default class Player extends Entity {
-  private sprite: Sprite
+  // private sprite: Sprite
   private anim: Animation
 
   constructor() {
@@ -14,11 +14,11 @@ export default class Player extends Entity {
     this.speed = 300
 
     // const texture = new Texture('assets/player.png')
-    this.sprite = new Sprite(this, {
-      src: Assets.texture('player'),
-      height: 66,
-      width: 34,
-    })
+    // this.sprite = new Sprite(this, {
+    //   height: 66,
+    //   src: Assets.texture('player'),
+    //   width: 34,
+    // })
 
     const texture = Assets.texture('player')
     const height = 66
@@ -39,20 +39,13 @@ export default class Player extends Entity {
     super.update(dt)
 
     const vel = { x: 0, y: 0 }
-    const i = window.input as Keyboard
-    if (i.isDown(D)) {
-      vel.x += 1
-    }
-    if (i.isDown(A)) {
-      vel.x -= 1
-    }
+    const i = (window as any).input as Keyboard // eslint-disable-line
 
-    if (i.isDown(W)) {
-      vel.y -= 1
-    }
-    if (i.isDown(S)) {
-      vel.y += 1
-    }
+    if (i.isDown(D)) vel.x += 1
+    if (i.isDown(A)) vel.x -= 1
+
+    if (i.isDown(W)) vel.y -= 1
+    if (i.isDown(S)) vel.y += 1
 
     this.pos.translate(vel.x * this.speed * dt, vel.y * this.speed * dt)
     this.anim.update(dt)
