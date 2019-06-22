@@ -6,17 +6,27 @@ export default abstract class GameObject implements Updateable {
 
   protected _pos = new Vector(0, 0)
   protected _prevPos = new Vector(0, 0)
-  protected _dirty: boolean = true
+  protected _speed = 0
+  protected _dirty = true
 
   get pos() { return this._pos } // prettier-ignore
-  set pos(pos: Vector) { this._pos = pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
+
+  get speed() { return this._speed } // prettier-ignore
+  set speed(speed: number) { this._speed = speed } // prettier-ignore
+
   get dirty() { return this._dirty } // prettier-ignore
 
   protected _updateDirtyState() {
     this._dirty = false
     if (!this.pos.eq(this.prevPos)) {
       this._dirty = true
+    }
+  }
+
+  protected _updateBehaviors(dt: number) {
+    for (const b of this.behaviors) {
+      b.update(dt)
     }
   }
 
@@ -30,9 +40,7 @@ export default abstract class GameObject implements Updateable {
   }
 
   public update(dt: number) {
-    for (const b of this.behaviors) {
-      b.update(dt)
-    }
+    this._updateBehaviors(dt)
   }
 
   public lateUpdate(dt: number) {
