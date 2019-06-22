@@ -3,12 +3,12 @@ import Player from './Player'
 
 import assetMap from './assets'
 
-const canvas = document.getElementsByTagName('canvas')[0]
-const ctx = canvas.getContext('2d')
-canvas.style.backgroundColor = 'white'
+const config = {
+  height: 600,
+  width: 960,
+}
 
-const game = new Game(ctx!) // eslint-disable-line
-
+const game = new Game(config) // eslint-disable-line
 game.load(assetMap).then(() => {
   const player = new Player()
   game.add(player)

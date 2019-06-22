@@ -14,7 +14,6 @@ export default class Sprite implements Drawable {
   constructor(private host: Entity, private config: SpriteConfig) {}
 
   draw(ctx: CanvasRenderingContext2D) {
-    // TODO: do not clear and redraw if host is not dirty
     ctx.clearRect(
       this.host.prevPos.x,
       this.host.prevPos.y,
