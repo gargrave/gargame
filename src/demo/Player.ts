@@ -42,7 +42,7 @@ export default class Player extends Entity {
     this.addBehavior(this.animator)
   }
 
-  update(dt: number) {
+  public update(dt: number) {
     super.update(dt)
 
     const vel = { x: 0, y: 0 }
@@ -66,7 +66,7 @@ export default class Player extends Entity {
     this.pos.translate(vel.x * speed, vel.y * speed)
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D) {
     super.draw(ctx)
     // ctx.fillStyle = 'rgb(255, 0, 0)'
     // ctx.fillRect(this.pos.x, this.pos.y, 48, 48)

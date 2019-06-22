@@ -10,11 +10,9 @@ export type AssetMap = {
 export default class Loader {
   constructor(private assets: AssetMap) {}
 
-  loadAll() {
+  public loadAll() {
     const { textures } = this.assets
-
     const expectedTextures = Object.keys(textures).length
-
     let loadedTextures = 0
 
     return new Promise<boolean>((resolve, reject) => {

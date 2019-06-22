@@ -9,26 +9,25 @@ export default class Keyboard implements Updateable {
     window.addEventListener('keyup', this.onKeyUp)
   }
 
-  onKeyDown = (e: KeyboardEvent) => {
+  public onKeyDown = (e: KeyboardEvent) => {
     this.kbState[e.keyCode] = true
   }
 
-  onKeyUp = (e: KeyboardEvent) => {
+  public onKeyUp = (e: KeyboardEvent) => {
     this.kbState[e.keyCode] = false
   }
 
-  earlyUpdate(dt: number) {}
-  update(dt: number) {}
+  public update(dt: number) {}
 
-  lateUpdate(dt: number) {
+  public lateUpdate(dt: number) {
     this.prevKbState = { ...this.kbState }
   }
 
-  isDown(key: number) {
+  public isDown(key: number) {
     return this.kbState[key]
   }
 
-  wasPressed(key: number) {
+  public wasPressed(key: number) {
     return this.kbState[key] && !this.prevKbState[key]
   }
 }

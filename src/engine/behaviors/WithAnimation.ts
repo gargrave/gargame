@@ -18,7 +18,7 @@ export default class WithAnimation implements Behavior {
     this.anim = animations[defaultAnimationKey]
   }
 
-  setCurrent(next: string) {
+  public setCurrent(next: string) {
     if (this.currentAnimationKey === next) return
 
     this.currentAnimationKey = next
@@ -29,11 +29,11 @@ export default class WithAnimation implements Behavior {
     this.anim.start()
   }
 
-  update(dt: number) {
+  public update(dt: number) {
     this.anim.update(dt)
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D) {
     this.anim.draw(ctx)
   }
 }

@@ -50,12 +50,12 @@ export default class Animation implements Drawable, Updateable {
     this.currentFrameTime = 0
   }
 
-  start() {
+  public start() {
     this.currentFrame = 0
     this.currentFrameTime = 0
   }
 
-  update(dt: number) {
+  public update(dt: number) {
     if (!this.config.frameDuration) return
 
     this.currentFrameTime += dt
@@ -64,7 +64,7 @@ export default class Animation implements Drawable, Updateable {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D) {
     this.frames[this.currentFrame].draw(ctx)
   }
 }

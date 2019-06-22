@@ -4,5 +4,6 @@ import Game from './Game'
 import GameObject from './GameObject'
 import GuiObject from './GuiObject'
 import Loader from './Loader'
+import Scene from './Scene'
 
-export { Assets, Game, GameObject, GuiObject, Entity, Loader }
+export { Assets, Game, GameObject, GuiObject, Entity, Loader, Scene }

@@ -77,7 +77,7 @@ export default class Game {
     }
   }
 
-  mainLoop = () => {
+  public mainLoop = () => {
     const now = Date.now()
     const dt = now - this.lastUpdate
     this.lastUpdate = now
@@ -115,7 +115,6 @@ export default class Game {
   }
 
   public earlyUpdate(dt: number) {
-    this.input.earlyUpdate(dt)
     for (const e of this.entities) e.earlyUpdate && e.earlyUpdate(dt)
     for (const g of this.guiObjects) g.earlyUpdate && g.earlyUpdate(dt)
   }

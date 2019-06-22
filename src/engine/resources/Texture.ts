@@ -1,13 +1,13 @@
 import Loadable from '../interfaces/Loadable'
 
 export default class Texture implements Loadable {
-  protected _img: HTMLImageElement
+  protected _img!: HTMLImageElement
 
   constructor(private imgSrc: string) {}
 
   get img() { return this._img } // prettier-ignore
 
-  load = () => {
+  public load = () => {
     return new Promise<boolean>((resolve, reject) => {
       try {
         const img = new Image()
