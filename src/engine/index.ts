@@ -1,7 +1,7 @@
 import { WithAnimation } from './behaviors'
 import { Assets, Game, Entity, Loader } from './core'
 import { Keyboard } from './input'
-import { Animation, Sprite } from './rendering'
+import { Animation, Label, Sprite } from './rendering'
 import { Texture } from './resources'
 import { clamp, wrap } from './utils'
 
@@ -12,6 +12,7 @@ export {
   Entity,
   Game,
   Keyboard,
+  Label,
   Loader,
   Sprite,
   Texture,

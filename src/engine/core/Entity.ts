@@ -21,6 +21,7 @@ export default abstract class Entity implements Drawable, Updateable {
 
   earlyUpdate(dt: number) {
     this._prevPos.copyFrom(this._pos)
+    // TODO: add an 'isDirty' property
   }
 
   update(dt: number) {

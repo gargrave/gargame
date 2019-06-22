@@ -1,4 +1,4 @@
-import { Entity, Loader } from '.'
+import { Entity, GuiObject, Loader } from '.'
 import { Keyboard } from '../input'
 import { Log } from '../utils'
 
@@ -7,6 +7,7 @@ export default class Game {
   private lastUpdate = 0
   private ctx: CanvasRenderingContext2D
   private entities: Entity[] = []
+  private guiObjects: GuiObject[] = []
   private input: Keyboard
 
   constructor(ctx: CanvasRenderingContext2D) {
@@ -35,9 +36,11 @@ export default class Game {
     const dt = now - this.lastUpdate
     this.lastUpdate = now
 
+    this.earlyUpdate(dt)
     this.update(dt)
-    // this.update(dt / 1000.0)
     this.draw(this.ctx)
+    this.drawGUI(this.ctx) // TODO: this needs to be a separate canvas
+    this.lateUpdate(dt)
 
     if (this.running) {
       requestAnimationFrame(this.mainLoop)
@@ -61,26 +64,37 @@ export default class Game {
     this.entities.push(e)
   }
 
-  update(dt: number) {
+  addGuiObject(g: GuiObject) {
+    this.guiObjects.push(g)
+  }
+
+  earlyUpdate(dt: number) {
     this.input.earlyUpdate(dt)
-    for (const e of this.entities) {
-      e.earlyUpdate && e.earlyUpdate(dt)
-    }
+    for (const e of this.entities) e.earlyUpdate && e.earlyUpdate(dt)
+    for (const g of this.guiObjects) g.earlyUpdate && g.earlyUpdate(dt)
+  }
 
+  update(dt: number) {
     this.input.update(dt)
-    for (const e of this.entities) {
-      e.update(dt)
-    }
+    for (const e of this.entities) e.update(dt)
+    for (const g of this.guiObjects) g.update(dt)
+  }
 
+  lateUpdate(dt: number) {
     this.input.lateUpdate(dt)
-    for (const e of this.entities) {
-      e.lateUpdate && e.lateUpdate(dt)
-    }
+    for (const e of this.entities) e.lateUpdate && e.lateUpdate(dt)
+    for (const g of this.guiObjects) g.lateUpdate && g.lateUpdate(dt)
   }
 
   draw(ctx: CanvasRenderingContext2D) {
     for (const e of this.entities) {
       e.draw(ctx)
+    }
+  }
+
+  drawGUI(ctx: CanvasRenderingContext2D) {
+    for (const g of this.guiObjects) {
+      g.drawGUI(ctx)
     }
   }
 }
