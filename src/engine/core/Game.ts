@@ -1,16 +1,18 @@
-import { Entity, GuiObject, Loader } from '.'
 import { Keyboard } from '../input'
 import { getNewCanvasContext, Log } from '../utils'
 
+import Loader from './Loader'
+import Scene from './Scene'
+import gl from '../Globals'
+
 export type GameConfig = {
   height?: number
+  initialScene: string
+  scenes: {
+    [key: string]: typeof Scene
+  }
   width?: number
 }
-
-const defaultGameConfig: GameConfig = Object.freeze({
-  height: 480,
-  width: 640,
-})
 
 export default class Game {
   private config
@@ -19,23 +21,24 @@ export default class Game {
   private mainCtx!: CanvasRenderingContext2D
   private guiCtx!: CanvasRenderingContext2D
 
+  private scene: Scene
+  private nextScene?: string
+  private sceneHasTransitioned = false
+
   private running = false
   private lastUpdate = 0
-  private entities: Entity[] = []
-  private guiObjects: GuiObject[] = []
   private input: Keyboard
 
   constructor(config: GameConfig) {
     Log.info('Initializing game...')
 
-    this.config = {
-      ...defaultGameConfig,
-      ...config,
-    }
-
+    this.config = config
     this.setupDOM()
     this.input = new Keyboard()
     ;(window as any).input = this.input // eslint-disable-line
+
+    gl.game = this
+    gl.input = this.input
   }
 
   private setupDOM() {
@@ -64,12 +67,36 @@ export default class Game {
     document.body.appendChild(gameWrapper)
   }
 
+  private _instantiateSceneFromKey(key: string): Scene {
+    const map = this.config.scenes
+    if (key in map) {
+      const sceneCtor = map[key]
+      return new sceneCtor() as Scene
+    }
+
+    throw new Error(`Scene '${key} does not exist.`)
+  }
+
+  private _handlePendingSceneTransition() {
+    if (!this.nextScene) return
+
+    if (this.scene) {
+      this.scene.exit()
+    }
+
+    this.scene = this._instantiateSceneFromKey(this.nextScene)
+    this.scene.enter()
+    this.nextScene = undefined
+    this.sceneHasTransitioned = true
+  }
+
   public async load(assets) {
     const loader = new Loader(assets)
     try {
       Log.info('Game -> Beginning load()')
       await loader.loadAll()
       Log.info('Game -> Successful load()')
+      this.gotoScene(this.config.initialScene)
       return true
     } catch (e) {
       Log.info('Game -> Failure on load()')
@@ -106,40 +133,39 @@ export default class Game {
     this.running = false
   }
 
-  public add(e: Entity) {
-    this.entities.push(e)
-  }
-
-  public addGuiObject(g: GuiObject) {
-    this.guiObjects.push(g)
+  public gotoScene(scene: string) {
+    this.nextScene = scene
   }
 
   public earlyUpdate(dt: number) {
-    for (const e of this.entities) e.earlyUpdate && e.earlyUpdate(dt)
-    for (const g of this.guiObjects) g.earlyUpdate && g.earlyUpdate(dt)
+    this._handlePendingSceneTransition()
+    this.scene.earlyUpdate(dt)
   }
 
   public update(dt: number) {
     this.input.update(dt)
-    for (const e of this.entities) e.update(dt)
-    for (const g of this.guiObjects) g.update(dt)
+    this.scene.update(dt)
   }
 
   public lateUpdate(dt: number) {
     this.input.lateUpdate(dt)
-    for (const e of this.entities) e.lateUpdate && e.lateUpdate(dt)
-    for (const g of this.guiObjects) g.lateUpdate && g.lateUpdate(dt)
+    this.scene.lateUpdate(dt)
+    this.sceneHasTransitioned = false
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
-    for (const e of this.entities) {
-      e.draw(ctx)
+    if (this.sceneHasTransitioned) {
+      ctx.clearRect(0, 0, this.config.width, this.config.height)
     }
+
+    this.scene.draw(ctx)
   }
 
   public drawGUI(ctx: CanvasRenderingContext2D) {
-    for (const g of this.guiObjects) {
-      g.drawGUI(ctx)
+    if (this.sceneHasTransitioned) {
+      ctx.clearRect(0, 0, this.config.width, this.config.height)
     }
+
+    this.scene.drawGUI(ctx)
   }
 }
