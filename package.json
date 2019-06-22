@@ -2,6 +2,7 @@
   "name": "gengine",
   "version": "0.1.0",
   "main": "index.js",
+  "author": "Gabe Hargrave <gkhargrave@gmail.com>",
   "license": "MIT",
   "scripts": {
     "build": "webpack --config config/webpack.prod.js",

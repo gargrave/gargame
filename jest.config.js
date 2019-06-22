@@ -1,6 +1,6 @@
 module.exports = {
-  moduleFileExtensions: ['ts'],
+  moduleFileExtensions: ['js', 'ts'],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.(js|ts)$': '<rootDir>/node_modules/babel-jest',
   },
 }

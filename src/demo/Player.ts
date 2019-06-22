@@ -20,13 +20,13 @@ export default class Player extends Entity {
       fall: new Animation(this, {
         firstFrame: 3,
         height,
-        src: texture,
+        texture: texture,
         width,
       }),
       idle: new Animation(this, {
         firstFrame: 0,
         height,
-        src: texture,
+        texture: texture,
         width,
       }),
       run: new Animation(this, {
@@ -34,7 +34,7 @@ export default class Player extends Entity {
         frameDuration,
         height,
         lastFrame: 2,
-        src: texture,
+        texture: texture,
         width,
       }),
     }
