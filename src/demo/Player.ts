@@ -1,4 +1,4 @@
-import { Animation, Assets, Entity, Keyboard } from '../engine'
+import { Animation, Assets, Entity, Keyboard, WithAnimation } from '../engine'
 
 const D = 68
 const A = 65
@@ -6,33 +6,40 @@ const W = 87
 const S = 83
 
 export default class Player extends Entity {
-  // private sprite: Sprite
-  private anim: Animation
+  private animator: WithAnimation
 
   constructor() {
     super()
     this.speed = 300
 
-    // const texture = new Texture('assets/player.png')
-    // this.sprite = new Sprite(this, {
-    //   height: 66,
-    //   src: Assets.texture('player'),
-    //   width: 34,
-    // })
-
     const texture = Assets.texture('player')
     const height = 66
     const width = 34
     const frameDuration = 100
-    // TODO: entities should be able to auto-update any arbitrary number of "children"
-    this.anim = new Animation(this, {
-      firstFrame: 1,
-      frameDuration,
-      height,
-      lastFrame: 2,
-      src: texture,
-      width,
-    })
+    const animations = {
+      fall: new Animation(this, {
+        firstFrame: 3,
+        height,
+        src: texture,
+        width,
+      }),
+      idle: new Animation(this, {
+        firstFrame: 0,
+        height,
+        src: texture,
+        width,
+      }),
+      run: new Animation(this, {
+        firstFrame: 1,
+        frameDuration,
+        height,
+        lastFrame: 2,
+        src: texture,
+        width,
+      }),
+    }
+    this.animator = new WithAnimation(animations, 'idle')
+    this.addBehavior(this.animator)
   }
 
   update(dt: number) {
@@ -47,14 +54,20 @@ export default class Player extends Entity {
     if (i.isDown(W)) vel.y -= 1
     if (i.isDown(S)) vel.y += 1
 
-    this.pos.translate(vel.x * this.speed * dt, vel.y * this.speed * dt)
-    this.anim.update(dt)
+    if (vel.y !== 0) {
+      this.animator.setCurrent('fall')
+    } else if (vel.x !== 0) {
+      this.animator.setCurrent('run')
+    } else {
+      this.animator.setCurrent('idle')
+    }
+
+    const speed = this.speed * (dt / 1000.0)
+    this.pos.translate(vel.x * speed, vel.y * speed)
   }
 
-  draw(ctx: CanvasRenderingContext2D, dt: number) {
-    super.draw(ctx, dt)
-    // this.sprite.draw(ctx, dt)
-    this.anim.draw(ctx, dt)
+  draw(ctx: CanvasRenderingContext2D) {
+    super.draw(ctx)
     // ctx.fillStyle = 'rgb(255, 0, 0)'
     // ctx.fillRect(this.pos.x, this.pos.y, 48, 48)
     // ctx.clearRect(this.prevPos.x, this.prevPos.y, 34, 66)

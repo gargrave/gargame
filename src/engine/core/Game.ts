@@ -37,7 +37,7 @@ export default class Game {
 
     this.update(dt)
     // this.update(dt / 1000.0)
-    this.draw(this.ctx, dt)
+    this.draw(this.ctx)
 
     if (this.running) {
       requestAnimationFrame(this.mainLoop)
@@ -64,7 +64,7 @@ export default class Game {
   update(dt: number) {
     this.input.earlyUpdate(dt)
     for (const e of this.entities) {
-      e.earlyUpdate(dt)
+      e.earlyUpdate && e.earlyUpdate(dt)
     }
 
     this.input.update(dt)
@@ -74,13 +74,13 @@ export default class Game {
 
     this.input.lateUpdate(dt)
     for (const e of this.entities) {
-      e.lateUpdate(dt)
+      e.lateUpdate && e.lateUpdate(dt)
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D, dt: number) {
+  draw(ctx: CanvasRenderingContext2D) {
     for (const e of this.entities) {
-      e.draw(ctx, dt)
+      e.draw(ctx)
     }
   }
 }

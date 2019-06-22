@@ -11,13 +11,16 @@ export type SpriteConfig = {
 }
 
 export default class Sprite implements Drawable {
+  private host: Entity
   private src: Texture
   private h: number
   private w: number
   private imgX: number
   private imgY: number
 
-  constructor(private host: Entity, config: SpriteConfig) {
+  constructor(host: Entity, config: SpriteConfig) {
+    this.host = host
+    // TODO: ensure the naming here is the same as Animation
     this.src = config.src
     this.h = config.height
     this.w = config.width

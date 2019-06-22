@@ -14,7 +14,7 @@ export type AnimationConfig = {
   firstFrame: number
   frameDuration?: number
   height: number
-  lastFrame: number
+  lastFrame?: number
   src: Texture
   width: number
 }
@@ -33,7 +33,8 @@ export default class Animation implements Drawable, Updateable {
       width: config.width,
     }
     const start = { x: config.width * config.firstFrame, y: 0 }
-    const range = config.lastFrame - config.firstFrame + 1
+    const lastFrame = config.lastFrame || config.firstFrame
+    const range = lastFrame - config.firstFrame + 1
 
     for (let i = 0; i < range; i += 1) {
       this.frames.push(
@@ -46,12 +47,15 @@ export default class Animation implements Drawable, Updateable {
     }
   }
 
+  start() {
+    this.currentFrame = 0
+    this.currentFrameTime = 0
+  }
+
   incrementFrame() {
     this.currentFrame = wrap(0, this.frames.length - 1, this.currentFrame + 1)
     this.currentFrameTime = 0
   }
-
-  earlyUpdate(_dt: number) {}
 
   update(dt: number) {
     if (!this.config.frameDuration) return
@@ -62,9 +66,7 @@ export default class Animation implements Drawable, Updateable {
     }
   }
 
-  lateUpdate(dt: number) {}
-
-  draw(ctx: CanvasRenderingContext2D, dt: number) {
-    this.frames[this.currentFrame].draw(ctx, dt)
+  draw(ctx: CanvasRenderingContext2D) {
+    this.frames[this.currentFrame].draw(ctx)
   }
 }
