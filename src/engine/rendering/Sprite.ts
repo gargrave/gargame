@@ -10,7 +10,7 @@ export type SpriteConfig = {
   y?: number
 }
 
-export default class Sprite implements Drawable {
+export class Sprite implements Drawable {
   constructor(private host: Entity, private config: SpriteConfig) {}
 
   public draw(ctx: CanvasRenderingContext2D) {

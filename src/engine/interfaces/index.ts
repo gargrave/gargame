@@ -1,7 +1,5 @@
-import Behavior from './Behavior'
-import Drawable from './Drawable'
-import DrawableGUI from './DrawableGUI'
-import Loadable from './Loadable'
-import Updateable from './Updateable'
-
-export { Behavior, Drawable, DrawableGUI, Loadable, Updateable }
+export * from './Behavior'
+export * from './Drawable'
+export * from './DrawableGUI'
+export * from './Loadable'
+export * from './Updateable'

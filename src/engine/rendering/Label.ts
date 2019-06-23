@@ -6,7 +6,7 @@ export type LabelConfig = {
   y: number
 }
 
-export default class Label extends GuiObject {
+export class Label extends GuiObject {
   private config: LabelConfig
   private textHasUpdated: boolean = false
 

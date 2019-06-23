@@ -1,9 +1,10 @@
-import { Sprite } from '.'
 import { Entity } from '../core'
 import { Drawable, Updateable } from '../interfaces'
 import { Texture } from '../resources'
 import { wrap } from '../utils'
 import { CurriedNumberFn } from '../utils/mathHelpers'
+
+import { Sprite } from './Sprite'
 
 export type AnimationConfig = {
   firstFrame: number
@@ -14,7 +15,7 @@ export type AnimationConfig = {
   width: number
 }
 
-export default class Animation implements Drawable, Updateable {
+export class Animation implements Drawable, Updateable {
   private frames: Sprite[] = []
   private currentFrame: number
   private currentFrameTime: number = 0

@@ -1,4 +1,4 @@
-import { Animation, Assets, Entity, Keyboard, WithAnimation } from '../engine'
+import { Animation, Assets, Entity, WithAnimation } from '../engine'
 import gl from '../engine/Globals'
 
 const D = 68
@@ -10,35 +10,42 @@ export default class Player extends Entity {
   private animator: WithAnimation
 
   constructor() {
-    super()
-    this.speed = 300
+    super({
+      height: 66,
+      speed: 300,
+      width: 34,
+      x: 100,
+      y: 100,
+    })
 
+    const h = this._height
+    const w = this._width
     const texture = Assets.texture('player')
-    const height = 66
-    const width = 34
     const frameDuration = 100
+
     const animations = {
       fall: new Animation(this, {
         firstFrame: 3,
-        height,
+        height: h,
         texture: texture,
-        width,
+        width: w,
       }),
       idle: new Animation(this, {
         firstFrame: 0,
-        height,
+        height: h,
         texture: texture,
-        width,
+        width: w,
       }),
       run: new Animation(this, {
         firstFrame: 1,
         frameDuration,
-        height,
+        height: h,
         lastFrame: 2,
         texture: texture,
-        width,
+        width: w,
       }),
     }
+
     this.animator = new WithAnimation(animations, 'idle')
     this.addBehavior(this.animator)
   }
@@ -64,14 +71,6 @@ export default class Player extends Entity {
     }
 
     const speed = this.speed * (dt / 1000.0)
-    this.pos.translate(vel.x * speed, vel.y * speed)
-  }
-
-  public draw(ctx: CanvasRenderingContext2D) {
-    super.draw(ctx)
-    // ctx.fillStyle = 'rgb(255, 0, 0)'
-    // ctx.fillRect(this.pos.x, this.pos.y, 48, 48)
-    // ctx.clearRect(this.prevPos.x, this.prevPos.y, 34, 66)
-    // ctx.drawImage(this.sprite, 0, 0, 34, 66, this.pos.x, this.pos.y, 34, 66)
+    this.move(vel.x * speed, vel.y * speed)
   }
 }

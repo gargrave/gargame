@@ -1,9 +1,15 @@
-import { Drawable } from '../interfaces'
+import { Colors, Drawable, Primitive, Rect } from '../'
 import GameObject, { GameObjectConfig } from './GameObject'
 
+const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
+  Primitive.Stroke.rect(ctx, Colors.Debug.Bounds, bounds, 1)
+
 export default abstract class Entity extends GameObject implements Drawable {
+  private drawBounds: (ctx: CanvasRenderingContext2D) => void
+
   constructor(config: GameObjectConfig) {
     super(config)
+    this.drawBounds = boundsDrawer(this._bounds)
   }
 
   protected _drawBehaviors(ctx: CanvasRenderingContext2D) {
@@ -17,12 +23,6 @@ export default abstract class Entity extends GameObject implements Drawable {
   }
 
   public debugDraw(ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = 'rgb(225, 0, 0)'
-    ctx.strokeRect(
-      this._bounds.x + 1,
-      this._bounds.y + 1,
-      this._bounds.w - 2,
-      this._bounds.h - 2,
-    )
+    this.drawBounds(ctx)
   }
 }
