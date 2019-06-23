@@ -1,4 +1,5 @@
 import { Animation, Assets, Entity, Keyboard, WithAnimation } from '../engine'
+import gl from '../engine/Globals'
 
 const D = 68
 const A = 65
@@ -46,7 +47,7 @@ export default class Player extends Entity {
     super.update(dt)
 
     const vel = { x: 0, y: 0 }
-    const i = (window as any).input as Keyboard // eslint-disable-line
+    const i = gl.input
 
     if (i.isDown(D)) vel.x += 1
     if (i.isDown(A)) vel.x -= 1

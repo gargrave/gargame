@@ -1,4 +1,4 @@
-import { Game, Scene } from '../engine'
+import { Game } from '../engine'
 
 import assetMap from './assets'
 import GameScene from './scenes/Game.scene'
@@ -15,6 +15,7 @@ const config = {
 }
 
 const game = new Game(config) // eslint-disable-line
+
 game.load(assetMap).then(() => {
   const w = window as any // eslint-disable-line
   w.game = game

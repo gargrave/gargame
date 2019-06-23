@@ -1,5 +1,6 @@
 import { Keyboard } from '../input'
-import { getNewCanvasContext, Log } from '../utils'
+import { Log } from '../utils'
+import { getNewCanvasContext, initGameWrapper } from '../utils/domHelpers'
 
 import Loader from './Loader'
 import Scene from './Scene'
@@ -35,36 +36,19 @@ export default class Game {
     this.config = config
     this.setupDOM()
     this.input = new Keyboard()
-    ;(window as any).input = this.input // eslint-disable-line
 
     gl.game = this
     gl.input = this.input
   }
 
   private setupDOM() {
-    const gameWrapper = document.createElement('div')
-    gameWrapper.style.margin = 'auto'
-    gameWrapper.style.marginTop = '56px'
-
-    const config = {
-      height: this.config.height,
-      styles: {
-        background: 'transparent',
-      },
-      width: this.config.width,
-    }
-    const bgConfig = {
-      ...config,
-      styles: {
-        ...config.styles,
-        background: 'white',
-      },
-    }
-    this.bgCtx = getNewCanvasContext(gameWrapper, bgConfig, 'bg')
-    this.mainCtx = getNewCanvasContext(gameWrapper, config, 'main')
-    this.guiCtx = getNewCanvasContext(gameWrapper, config, 'gui')
-
-    document.body.appendChild(gameWrapper)
+    const gameWrapper = initGameWrapper()
+    const w = this.config.width
+    const h = this.config.height
+    const bgConfig = { id: 'bg', styles: { background: '#ccc' } }
+    this.bgCtx = getNewCanvasContext(gameWrapper, w, h, bgConfig)
+    this.mainCtx = getNewCanvasContext(gameWrapper, w, h, { id: 'main' })
+    this.guiCtx = getNewCanvasContext(gameWrapper, w, h, { id: 'gui' })
   }
 
   private _instantiateSceneFromKey(key: string): Scene {
@@ -93,13 +77,10 @@ export default class Game {
   public async load(assets) {
     const loader = new Loader(assets)
     try {
-      Log.info('Game -> Beginning load()')
       await loader.loadAll()
-      Log.info('Game -> Successful load()')
       this.gotoScene(this.config.initialScene)
       return true
     } catch (e) {
-      Log.info('Game -> Failure on load()')
       return false
     }
   }

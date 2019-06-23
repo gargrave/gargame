@@ -1,31 +1,58 @@
 export type CanvasConfig = {
-  height: number
+  id?: string
   styles?: { [key: string]: string }
-  width: number
+}
+
+const defaultStyles = `
+  body {
+    background: #1f1f1f;
+  }
+  canvas {
+    background: transparent;
+    display: block;
+    left: 50%;
+    margin: auto;
+    position: absolute;
+    transform: translateX(-50%);
+  }
+  div#gameWrapper {
+    margin: auto;
+    margin-top: 56px;
+  }
+`
+
+const setDefaultStyles = () => {
+  let styleEl = document.head.querySelector('style')
+  if (styleEl) return
+
+  styleEl = document.head.appendChild(document.createElement('style'))
+  styleEl.appendChild(document.createTextNode(defaultStyles))
+}
+
+export const initGameWrapper = () => {
+  setDefaultStyles()
+  const gameWrapper = document.createElement('div')
+  gameWrapper.id = 'gameWrapper'
+  document.body.appendChild(gameWrapper)
+  return gameWrapper
 }
 
 let ctxId = 0
 export const getNewCanvasContext = (
   parent: HTMLElement,
-  config: CanvasConfig,
-  id?: string,
+  width: number,
+  height: number,
+  config?: CanvasConfig,
 ): CanvasRenderingContext2D => {
-  const { height, styles = {}, width } = config
+  const { id = ctxId, styles = {} } = config || {}
   ctxId += 1
 
   const canvas = document.createElement('canvas')
   canvas.id = `canvas__${id || ctxId}`
   canvas.height = height
   canvas.width = width
-  // TODO: put these in a style block instead of applying them inline
-  // document.head.appendChild(document.createElement('style'))
-  canvas.style.display = 'block'
-  canvas.style.margin = 'auto'
-  canvas.style.position = 'absolute'
-  canvas.style.left = '50%'
-  canvas.style.transform = 'translateX(-50%)'
 
-  // apply all supplied valid styles
+  // apply all valid override styles
   Object.entries(styles).forEach(([key, value]) => {
     if (key in canvas.style) {
       canvas.style[key] = value
