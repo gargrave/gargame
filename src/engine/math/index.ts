@@ -1,3 +1,4 @@
+import Rect from './Rect'
 import Vector from './Vector'
 
-export { Vector }
+export { Rect, Vector }
