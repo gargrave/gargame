@@ -22,7 +22,7 @@ export default class Game {
   private mainCtx!: CanvasRenderingContext2D
   private guiCtx!: CanvasRenderingContext2D
 
-  private scene: Scene
+  private scene!: Scene
   private nextScene?: string
   private sceneHasTransitioned = false
 

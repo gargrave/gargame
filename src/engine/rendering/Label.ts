@@ -11,12 +11,8 @@ export default class Label extends GuiObject {
   private textHasUpdated: boolean = false
 
   private _text: string = ''
-  private _width: number = 0
-  private _height: number = 0
 
   get text() { return this._text } // prettier-ignore
-  get width() { return this._width } // prettier-ignore
-  get height() { return this._height } // prettier-ignore
 
   constructor(text: string, config: LabelConfig) {
     super()

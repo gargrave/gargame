@@ -5,11 +5,11 @@ let _game: Game
 let _input: Keyboard
 
 class Globals {
-  get game() { return _game } // prettier-ignore
-  set game(game) { _game = game } // prettier-ignore
-  get input() { return _input } // prettier-ignore
-  set input(input) { _input = input } // prettier-ignore
+  static get game() { return _game } // prettier-ignore
+  static set game(game: Game) { _game = game } // prettier-ignore
+
+  static get input() { return _input } // prettier-ignore
+  static set input(input: Keyboard) { _input = input } // prettier-ignore
 }
 
-const instance = new Globals()
-export default instance
+export default Globals
