@@ -21,6 +21,18 @@ describe('Rect', () => {
     })
   })
 
+  describe('setPosition', () => {
+    it('sets its position and keeps its previous width/height', () => {
+      const r = new Rect(1, 2, 3, 4)
+      r.setPosition(5, 6)
+
+      expect(r.x).toBe(5)
+      expect(r.y).toBe(6)
+      expect(r.w).toBe(3)
+      expect(r.h).toBe(4)
+    })
+  })
+
   describe('copyFrom', () => {
     it("copies another Rect's values", () => {
       const r1 = new Rect(1, 2, 3, 4)

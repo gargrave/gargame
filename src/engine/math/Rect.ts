@@ -20,6 +20,11 @@ export default class Rect {
     this._h = h
   }
 
+  public setPosition(x: number, y: number) {
+    this._x = x
+    this._y = y
+  }
+
   public copyFrom(other: Rect) {
     const { x, y, w, h } = other
     this.setTo(x, y, w, h)

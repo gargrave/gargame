@@ -1,10 +1,12 @@
 import { Behavior, Updateable } from '../interfaces'
-import { Vector } from '../math'
+import { Rect, Vector } from '../math'
 
 export type GameObjectConfig = {
   height?: number
   speed?: number
   width?: number
+  x?: number
+  y?: number
 }
 
 export default abstract class GameObject implements Updateable {
@@ -12,14 +14,16 @@ export default abstract class GameObject implements Updateable {
 
   protected _width: number = 0
   protected _height: number = 0
-  protected _pos = new Vector(0, 0)
-  protected _prevPos = new Vector(0, 0)
+  protected _bounds: Rect
+  protected _pos: Vector
+  protected _prevPos: Vector
 
   protected _speed = 0
   protected _dirty = true
 
   get width() { return this._width } // prettier-ignore
   get height() { return this._height } // prettier-ignore
+  get bounds() { return this._bounds } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
 
@@ -28,10 +32,13 @@ export default abstract class GameObject implements Updateable {
   get dirty() { return this._dirty } // prettier-ignore
 
   constructor(config: GameObjectConfig) {
-    const { height, speed, width } = config
+    const { height, speed, width, x, y } = config
     this._width = width || 0
     this._speed = speed || 0
     this._height = height || 0
+    this._pos = new Vector(x || 0, y || 0)
+    this._prevPos = new Vector(x || 0, y || 0)
+    this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
   }
 
   protected _updateDirtyState() {
@@ -45,6 +52,11 @@ export default abstract class GameObject implements Updateable {
     for (const b of this.behaviors) {
       b.update(dt)
     }
+  }
+
+  protected move(x: number, y: number) {
+    this._pos.translate(x, y)
+    this._bounds.setPosition(this._pos.x, this._pos.y)
   }
 
   public addBehavior(b: Behavior) {

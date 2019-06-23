@@ -2,11 +2,15 @@ import { Keyboard } from '../input'
 import { Log } from '../utils'
 import { getNewCanvasContext, initGameWrapper } from '../utils/domHelpers'
 
+import Assets from './Assets'
 import Loader from './Loader'
 import Scene from './Scene'
 import gl from '../Globals'
 
+const ENV = process.env.NODE_ENV
+
 export type GameConfig = {
+  debug?: boolean
   height?: number
   initialScene: string
   scenes: {
@@ -37,8 +41,19 @@ export default class Game {
     this.setupDOM()
     this.input = new Keyboard()
 
+    gl.debug = config.debug || false
     gl.game = this
     gl.input = this.input
+
+    if (ENV === 'development') {
+      Log.info('Adding "gg" helper to window for development mode!')
+      // eslint-disable-next-line
+      ;(window as any).gg = {
+        assets: Assets.allAssets,
+        debug: d => (gl.debug = d),
+        game: this,
+      }
+    }
   }
 
   private setupDOM() {
@@ -140,6 +155,9 @@ export default class Game {
     }
 
     this.scene.draw(ctx)
+    if (gl.debug) {
+      this.scene.debugDraw(ctx)
+    }
   }
 
   public drawGUI(ctx: CanvasRenderingContext2D) {

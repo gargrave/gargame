@@ -43,6 +43,12 @@ export default class Scene implements Drawable, DrawableGUI, Updateable {
     }
   }
 
+  public debugDraw(ctx: CanvasRenderingContext2D) {
+    for (const e of this.entities) {
+      e.debugDraw && e.debugDraw(ctx)
+    }
+  }
+
   public drawGUI(ctx: CanvasRenderingContext2D) {
     for (const g of this.guiObjects) {
       g.drawGUI(ctx)

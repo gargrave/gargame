@@ -4,18 +4,14 @@ const _assets = {
   textures: {},
 }
 
-const Assets = {
-  addTexture(key: string, t: Texture) {
+export default class Assets {
+  static get allAssets() { return _assets } // prettier-ignore
+
+  public static addTexture(key: string, t: Texture) {
     _assets.textures[key] = t
-  },
+  }
 
-  texture(key: string) {
+  public static texture(key: string) {
     return _assets.textures[key]
-  },
+  }
 }
-
-if (process.env.NODE_ENV === 'development') {
-  ;(window as any).assets = _assets // eslint-disable-line
-}
-
-export default Assets
