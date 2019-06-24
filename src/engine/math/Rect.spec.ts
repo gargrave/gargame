@@ -7,6 +7,8 @@ describe('Rect', () => {
     expect(r.y).toBe(2)
     expect(r.w).toBe(3)
     expect(r.h).toBe(4)
+    expect(r.bottom).toBe(6)
+    expect(r.right).toBe(4)
   })
 
   describe('setTo', () => {
@@ -18,6 +20,8 @@ describe('Rect', () => {
       expect(r.y).toBe(6)
       expect(r.w).toBe(7)
       expect(r.h).toBe(8)
+      expect(r.bottom).toBe(14)
+      expect(r.right).toBe(12)
     })
   })
 
@@ -30,6 +34,8 @@ describe('Rect', () => {
       expect(r.y).toBe(6)
       expect(r.w).toBe(3)
       expect(r.h).toBe(4)
+      expect(r.bottom).toBe(10)
+      expect(r.right).toBe(8)
     })
   })
 
@@ -48,6 +54,32 @@ describe('Rect', () => {
       expect(r2.y).toBe(6)
       expect(r2.w).toBe(7)
       expect(r2.h).toBe(8)
+    })
+  })
+
+  describe('overlaps', () => {
+    it('returns false when no overlap is found', () => {
+      const r1 = new Rect(10, 10, 10, 10)
+      const r2 = new Rect(30, 30, 10, 10)
+      expect(r1.overlaps(r2)).toBe(false)
+    })
+
+    it('returns false when Rects are next to one-another, but not touching', () => {
+      const r1 = new Rect(10, 10, 10, 10)
+      const r2 = new Rect(21, 10, 10, 10)
+      expect(r1.overlaps(r2)).toBe(false)
+    })
+
+    it('returns true with a single-pixel overlap', () => {
+      const r1 = new Rect(0, 0, 2, 2)
+      const r2 = new Rect(1, 1, 1, 1)
+      expect(r1.overlaps(r2)).toBe(true)
+    })
+
+    it('returns true with a major overlap', () => {
+      const r1 = new Rect(10, 10, 10, 10)
+      const r2 = new Rect(15, 15, 10, 10)
+      expect(r1.overlaps(r2)).toBe(true)
     })
   })
 
