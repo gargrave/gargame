@@ -1,4 +1,4 @@
-import { Texture } from '../resources/Texture'
+import { Texture } from './Texture'
 
 export type AssetMap = {
   textures: { [key: string]: Texture }

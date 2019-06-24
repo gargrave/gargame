@@ -1,7 +1,5 @@
-export * from './Assets'
 export * from './Entity'
 export * from './Game'
 export * from './GameObject'
 export * from './GuiObject'
-export * from './Loader'
 export * from './Scene'

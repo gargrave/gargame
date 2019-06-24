@@ -1,4 +1,4 @@
-import { AssetQueueMap } from '../engine/core/Loader'
+import { AssetQueueMap } from '../engine'
 
 export const assetMap: AssetQueueMap = {
   textures: {

@@ -1,6 +1,5 @@
-import { Texture } from '../resources/Texture'
-
 import { Assets } from './Assets'
+import { Texture } from './Texture'
 
 export type AssetQueueMap = {
   textures: {

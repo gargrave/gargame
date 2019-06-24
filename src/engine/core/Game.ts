@@ -1,10 +1,10 @@
 import { Keyboard } from '../input/Keyboard'
+import { Assets } from '../resources/Assets'
+import { Loader } from '../resources/Loader'
 import { Log } from '../utils/Log'
 import { getNewCanvasContext, initGameWrapper } from '../utils/domHelpers'
 import { Globals as gl } from '../Globals'
 
-import { Assets } from './Assets'
-import { Loader } from './Loader'
 import { Scene } from './Scene'
 
 const ENV = process.env.NODE_ENV
