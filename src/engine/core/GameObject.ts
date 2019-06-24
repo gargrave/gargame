@@ -1,5 +1,7 @@
-import { Behavior, Updateable } from '../interfaces'
-import { Rect, Vector } from '../math'
+import { Behavior } from '../interfaces/Behavior'
+import { Updateable } from '../interfaces/Updateable'
+import { Rect } from '../math/Rect'
+import { Vector } from '../math/Vector'
 
 export type GameObjectConfig = {
   height?: number
@@ -9,7 +11,7 @@ export type GameObjectConfig = {
   y?: number
 }
 
-export default abstract class GameObject implements Updateable {
+export abstract class GameObject implements Updateable {
   protected behaviors: Behavior[] = []
 
   protected _width: number = 0

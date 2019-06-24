@@ -1,6 +1,6 @@
-import { Updateable } from '../interfaces'
+import { Updateable } from '../interfaces/Updateable'
 
-export default class Keyboard implements Updateable {
+export class Keyboard implements Updateable {
   private kbState: { [key: number]: boolean } = {}
   private prevKbState: { [key: number]: boolean } = {}
 

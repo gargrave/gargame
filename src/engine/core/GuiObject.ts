@@ -1,8 +1,8 @@
-import { DrawableGUI } from '../interfaces'
-import GameObject, { GameObjectConfig } from './GameObject'
+import { DrawableGUI } from '../interfaces/DrawableGUI'
 
-export default abstract class GuiObject extends GameObject
-  implements DrawableGUI {
+import { GameObject, GameObjectConfig } from './GameObject'
+
+export abstract class GuiObject extends GameObject implements DrawableGUI {
   constructor(config: GameObjectConfig = {}) {
     super(config)
   }

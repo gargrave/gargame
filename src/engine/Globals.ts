@@ -1,6 +1,6 @@
-import { Game } from './core'
-import { Keyboard } from './input'
-import { Log } from './utils'
+import { Game } from './core/Game'
+import { Keyboard } from './input/Keyboard'
+import { Log } from './utils/Log'
 
 const ENV = process.env.NODE_ENV
 
@@ -8,7 +8,7 @@ let _debug = false
 let _game: Game
 let _input: Keyboard
 
-export default class Globals {
+export class Globals {
   static get debug() { return _debug } // prettier-ignore
   static set debug(debug: boolean) {
     // do not allow debug unless we are in dev mode

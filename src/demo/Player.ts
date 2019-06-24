@@ -1,5 +1,10 @@
-import { Animation, Assets, Entity, WithAnimation } from '../engine'
-import gl from '../engine/Globals'
+import {
+  Animation,
+  Assets,
+  Entity,
+  Globals as gl,
+  WithAnimation,
+} from '../engine'
 
 const D = 68
 const A = 65

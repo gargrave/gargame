@@ -1,3 +1,1 @@
-import Texture from './Texture'
-
-export { Texture }
+export * from './Texture'

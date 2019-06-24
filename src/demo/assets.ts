@@ -1,9 +1,7 @@
-import { AssetMap } from '../engine/core/Loader'
+import { AssetQueueMap } from '../engine/core/Loader'
 
-const assetMap: AssetMap = {
+export const assetMap: AssetQueueMap = {
   textures: {
     player: 'assets/player.png',
   },
 }
-
-export default assetMap

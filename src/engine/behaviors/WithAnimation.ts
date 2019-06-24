@@ -1,7 +1,7 @@
-import { Behavior } from '../interfaces'
-import { Animation } from '../rendering'
+import { Behavior } from '../interfaces/Behavior'
+import { Animation } from '../rendering/Animation'
 
-export default class WithAnimation implements Behavior {
+export class WithAnimation implements Behavior {
   private animations: { [key: string]: Animation }
   private anim: Animation
   private currentAnimationKey: string

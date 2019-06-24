@@ -1,6 +1,6 @@
-import { Entity } from '../core'
-import { Drawable } from '../interfaces'
-import { Texture } from '../resources'
+import { Entity } from '../core/Entity'
+import { Drawable } from '../interfaces/Drawable'
+import { Texture } from '../resources/Texture'
 
 export type SpriteConfig = {
   height: number

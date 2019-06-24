@@ -1,11 +1,11 @@
-import { Keyboard } from '../input'
-import { Log } from '../utils'
+import { Keyboard } from '../input/Keyboard'
+import { Log } from '../utils/Log'
 import { getNewCanvasContext, initGameWrapper } from '../utils/domHelpers'
+import { Globals as gl } from '../Globals'
 
-import Assets from './Assets'
-import Loader from './Loader'
-import Scene from './Scene'
-import gl from '../Globals'
+import { Assets } from './Assets'
+import { Loader } from './Loader'
+import { Scene } from './Scene'
 
 const ENV = process.env.NODE_ENV
 
@@ -19,7 +19,7 @@ export type GameConfig = {
   width?: number
 }
 
-export default class Game {
+export class Game {
   private config
 
   private bgCtx!: CanvasRenderingContext2D

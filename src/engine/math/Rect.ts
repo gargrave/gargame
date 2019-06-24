@@ -1,4 +1,4 @@
-export default class Rect {
+export class Rect {
   protected _x!: number
   protected _y!: number
   protected _w!: number

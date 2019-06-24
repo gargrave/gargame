@@ -1,4 +1,4 @@
-import { Texture } from '../resources'
+import { Texture } from '../resources/Texture'
 
 export type AssetMap = {
   textures: { [key: string]: Texture }
@@ -8,7 +8,7 @@ const _assets: AssetMap = {
   textures: {},
 }
 
-export default class Assets {
+export class Assets {
   static get allAssets(): AssetMap { return _assets } // prettier-ignore
 
   public static addTexture(key: string, t: Texture) {

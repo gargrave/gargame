@@ -1,9 +1,7 @@
-import Assets from './Assets'
-import Entity from './Entity'
-import Game from './Game'
-import GameObject from './GameObject'
-import GuiObject from './GuiObject'
-import Loader from './Loader'
-import Scene from './Scene'
-
-export { Assets, Game, GameObject, GuiObject, Entity, Loader, Scene }
+export * from './Assets'
+export * from './Entity'
+export * from './Game'
+export * from './GameObject'
+export * from './GuiObject'
+export * from './Loader'
+export * from './Scene'

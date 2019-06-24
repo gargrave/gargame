@@ -1,8 +1,8 @@
-import { Entity } from '../core'
-import { Drawable, Updateable } from '../interfaces'
-import { Texture } from '../resources'
-import { wrap } from '../utils'
-import { CurriedNumberFn } from '../utils/mathHelpers'
+import { Entity } from '../core/Entity'
+import { Drawable } from '../interfaces/Drawable'
+import { Updateable } from '../interfaces/Updateable'
+import { Texture } from '../resources/Texture'
+import { CurriedNumberFn, wrap } from '../utils/mathHelpers'
 
 import { Sprite } from './Sprite'
 

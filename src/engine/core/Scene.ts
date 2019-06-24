@@ -1,7 +1,11 @@
-import { Entity, GuiObject } from '../core'
-import { Drawable, DrawableGUI, Updateable } from '../interfaces'
+import { Drawable } from '../interfaces/Drawable'
+import { DrawableGUI } from '../interfaces/DrawableGUI'
+import { Updateable } from '../interfaces/Updateable'
 
-export default class Scene implements Drawable, DrawableGUI, Updateable {
+import { Entity } from './Entity'
+import { GuiObject } from './GuiObject'
+
+export class Scene implements Drawable, DrawableGUI, Updateable {
   protected entities: Entity[] = []
   protected guiObjects: GuiObject[] = []
 

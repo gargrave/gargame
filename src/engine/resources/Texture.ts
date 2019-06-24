@@ -1,6 +1,6 @@
-import Loadable from '../interfaces/Loadable'
+import { Loadable } from '../interfaces/Loadable'
 
-export default class Texture implements Loadable {
+export class Texture implements Loadable {
   protected _img!: HTMLImageElement
 
   constructor(private imgSrc: string) {}

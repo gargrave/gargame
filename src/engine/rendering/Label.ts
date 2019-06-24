@@ -1,4 +1,4 @@
-import { GuiObject } from '../core'
+import { GuiObject } from '../core/GuiObject'
 
 export type LabelConfig = {
   fontSize?: number

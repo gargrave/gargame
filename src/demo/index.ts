@@ -1,8 +1,8 @@
 import { Game } from '../engine'
 
-import assetMap from './assets'
-import GameScene from './scenes/Game.scene'
-import TitleScene from './scenes/Title.scene'
+import { assetMap } from './assets'
+import { GameScene } from './scenes/Game.scene'
+import { TitleScene } from './scenes/Title.scene'
 
 const config = {
   debug: true,

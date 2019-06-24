@@ -1,10 +1,14 @@
-import { Colors, Drawable, Primitive, Rect } from '../'
-import GameObject, { GameObjectConfig } from './GameObject'
+import { Colors } from '../constants/colors'
+import { Drawable } from '../interfaces/Drawable'
+import { Rect } from '../math/Rect'
+import { Primitive } from '../rendering/Primitive'
+
+import { GameObject, GameObjectConfig } from './GameObject'
 
 const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
   Primitive.Stroke.rect(ctx, Colors.Debug.Bounds, bounds, 1)
 
-export default abstract class Entity extends GameObject implements Drawable {
+export abstract class Entity extends GameObject implements Drawable {
   private drawBounds: (ctx: CanvasRenderingContext2D) => void
 
   constructor(config: GameObjectConfig) {

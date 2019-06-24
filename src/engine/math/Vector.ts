@@ -1,4 +1,4 @@
-export default class Vector {
+export class Vector {
   private _x: number
   private _y: number
 

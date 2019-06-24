@@ -1,4 +1,4 @@
-import { Rect } from '../math'
+import { Rect } from '../math/Rect'
 
 export class Primitive {
   public static Stroke = {

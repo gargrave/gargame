@@ -1,3 +1,3 @@
-export default interface Loadable {
+export interface Loadable {
   load(): Promise<boolean>
 }

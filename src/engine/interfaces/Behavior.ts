@@ -1,3 +1,4 @@
-import { Drawable, Updateable } from '.'
+import { Drawable } from './Drawable'
+import { Updateable } from './Updateable'
 
-export default interface Behavior extends Drawable, Updateable {}
+export interface Behavior extends Drawable, Updateable {}

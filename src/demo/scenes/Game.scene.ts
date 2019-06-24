@@ -2,7 +2,7 @@ import { Label, Scene } from '../../engine'
 
 import Player from '../Player'
 
-export default class GameScene extends Scene {
+export class GameScene extends Scene {
   public enter() {
     super.enter()
 

@@ -1,3 +1,1 @@
-import WithAnimation from './WithAnimation'
-
-export { WithAnimation }
+export * from './WithAnimation'

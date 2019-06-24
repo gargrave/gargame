@@ -1,14 +1,15 @@
-import { Assets } from '.'
-import { Texture } from '../resources'
+import { Texture } from '../resources/Texture'
 
-export type AssetMap = {
+import { Assets } from './Assets'
+
+export type AssetQueueMap = {
   textures: {
     [key: string]: string
   }
 }
 
-export default class Loader {
-  constructor(private assets: AssetMap) {}
+export class Loader {
+  constructor(private assets: AssetQueueMap) {}
 
   public loadAll() {
     const { textures } = this.assets

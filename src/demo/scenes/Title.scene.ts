@@ -1,7 +1,6 @@
-import { Label, Scene } from '../../engine'
-import gl from '../../engine/Globals'
+import { Globals as gl, Label, Scene } from '../../engine'
 
-export default class TitleScene extends Scene {
+export class TitleScene extends Scene {
   public enter() {
     super.enter()
     this.guiObjects = [
