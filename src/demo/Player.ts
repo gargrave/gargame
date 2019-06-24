@@ -11,7 +11,7 @@ const A = 65
 const W = 87
 const S = 83
 
-export default class Player extends Entity {
+export class Player extends Entity {
   private animator: WithAnimation
 
   constructor() {

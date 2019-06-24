@@ -2,6 +2,7 @@ import { Colors } from '../constants/colors'
 import { Drawable } from '../interfaces/Drawable'
 import { Rect } from '../math/Rect'
 import { Primitive } from '../rendering/Primitive'
+import { Globals as gl } from '../Globals'
 
 import { GameObject, GameObjectConfig } from './GameObject'
 
@@ -24,6 +25,9 @@ export abstract class Entity extends GameObject implements Drawable {
 
   public draw(ctx: CanvasRenderingContext2D) {
     this._drawBehaviors(ctx)
+    if (gl.debug) {
+      this.debugDraw(ctx)
+    }
   }
 
   public debugDraw(ctx: CanvasRenderingContext2D) {

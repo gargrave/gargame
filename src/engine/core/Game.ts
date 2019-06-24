@@ -155,9 +155,6 @@ export class Game {
     }
 
     this.scene.draw(ctx)
-    if (gl.debug) {
-      this.scene.debugDraw(ctx)
-    }
   }
 
   public drawGUI(ctx: CanvasRenderingContext2D) {
