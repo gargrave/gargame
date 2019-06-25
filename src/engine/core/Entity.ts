@@ -10,9 +10,9 @@ const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
   Primitive.Stroke.rect(ctx, Colors.Debug.Bounds, bounds, 1)
 
 export abstract class Entity extends GameObject implements Drawable {
-  private drawBounds: (ctx: CanvasRenderingContext2D) => void
+  private readonly drawBounds: (ctx: CanvasRenderingContext2D) => void
 
-  constructor(config: GameObjectConfig) {
+  protected constructor(config: GameObjectConfig) {
     super(config)
     this.drawBounds = boundsDrawer(this._bounds)
   }

@@ -14,13 +14,6 @@ export class Sprite implements Drawable {
   constructor(private host: Entity, private config: SpriteConfig) {}
 
   public draw(ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(
-      this.host.prevPos.x,
-      this.host.prevPos.y,
-      this.config.width,
-      this.config.height,
-    )
-
     ctx.drawImage(
       this.config.texture.img,
       this.config.x || 0,

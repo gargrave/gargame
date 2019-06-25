@@ -150,10 +150,7 @@ export class Game {
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
-    if (this.sceneHasTransitioned) {
-      ctx.clearRect(0, 0, this.config.width, this.config.height)
-    }
-
+    ctx.clearRect(0, 0, this.config.width, this.config.height)
     this.scene.draw(ctx)
   }
 
