@@ -18,7 +18,7 @@ export class GameScene extends Scene {
     this.add(new Tile(16 * size, 10 * size, size))
     this.add(new Tile(16 * size, 11 * size, size))
 
-    this.guiObjects = [new Label('This is a label!', { x: 10, y: 24 })]
+    this.addGuiObject(new Label('This is a label!', { x: 10, y: 24 }))
 
     if (process.env.NODE_ENV === 'development') {
       const w = window as any // eslint-disable-line

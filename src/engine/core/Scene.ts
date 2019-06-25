@@ -6,8 +6,8 @@ import { Entity } from './Entity'
 import { GuiObject } from './GuiObject'
 
 export class Scene implements Drawable, DrawableGUI, Updateable {
-  protected entities: Entity[] = []
-  protected guiObjects: GuiObject[] = []
+  private entities: Entity[] = []
+  private guiObjects: GuiObject[] = []
 
   constructor() {}
 
