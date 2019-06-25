@@ -1,27 +1,25 @@
 import { Entity, GameObjectConfig, Globals as gl, Primitive } from '../engine'
 
-const SIZE = 32
-const defaultConfig: GameObjectConfig = {
-  height: SIZE,
-  width: SIZE,
-}
-
 export class Tile extends Entity {
   private heyIHaveBeenDrawn = false
+  private color: string
 
-  constructor(gridX, gridY) {
+  constructor(x, y, size) {
     super({
-      ...defaultConfig,
-      x: gridX * SIZE,
-      y: gridY * SIZE,
+      height: size,
+      width: size,
+      x,
+      y,
     })
+    const c = () => Math.floor(Math.random() * 255)
+    this.color = `rgb(${c()}, ${c()}, ${c()})`
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
     // if (this.heyIHaveBeenDrawn) return
 
     ctx.clearRect(this._pos.x, this._pos.y, this._width, this._height)
-    Primitive.Fill.rect(ctx, '#00cc00', this._bounds, 0)
+    Primitive.Fill.rect(ctx, this.color, this._bounds, 0)
 
     this.heyIHaveBeenDrawn = true
     if (gl.debug) {
