@@ -33,7 +33,7 @@ export abstract class GameObject implements Updateable {
   set speed(speed: number) { this._speed = speed } // prettier-ignore
   get dirty() { return this._dirty } // prettier-ignore
 
-  constructor(config: GameObjectConfig) {
+  protected constructor(config: GameObjectConfig) {
     const { height, speed, width, x, y } = config
     this._width = width || 0
     this._speed = speed || 0

@@ -39,6 +39,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   public lateUpdate(dt: number) {
     for (const e of this.entities) e.lateUpdate && e.lateUpdate(dt)
     for (const g of this.guiObjects) g.lateUpdate && g.lateUpdate(dt)
+    //  TODO: perform some collision checks here!
   }
 
   public draw(ctx: CanvasRenderingContext2D) {

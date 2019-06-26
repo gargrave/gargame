@@ -6,14 +6,23 @@ import { Globals as gl } from '../Globals'
 
 import { GameObject, GameObjectConfig } from './GameObject'
 
+export type EntityConfig = GameObjectConfig & {
+  collisionGroups?: string[]
+}
+
 const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
   Primitive.Stroke.rect(ctx, Colors.Debug.Bounds, bounds, 1)
 
 export abstract class Entity extends GameObject implements Drawable {
   private readonly drawBounds: (ctx: CanvasRenderingContext2D) => void
 
-  protected constructor(config: GameObjectConfig) {
+  protected readonly _collisionGroups: string[]
+
+  get collisionGroups() { return this._collisionGroups } // prettier-ignore
+
+  protected constructor(config: EntityConfig) {
     super(config)
+    this._collisionGroups = config.collisionGroups || []
     this.drawBounds = boundsDrawer(this._bounds)
   }
 
