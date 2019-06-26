@@ -20,4 +20,10 @@ export class Star extends Entity {
     const sprite = new Sprite(this, config)
     this.addBehavior(new WithSprite(this, sprite))
   }
+
+  public onCollisionEnter(group: string, other: Entity) {
+    if (group === 'player') {
+      this.deactivate()
+    }
+  }
 }
