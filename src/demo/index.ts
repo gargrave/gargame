@@ -1,11 +1,13 @@
-import { Game } from '../engine'
+import { Game, GameConfig } from '../engine'
 
+import { collisionGroups } from './config/collisionGroups'
 import { assetMap } from './assets'
 import { GameScene } from './scenes/Game.scene'
 import { TitleScene } from './scenes/Title.scene'
 
-const config = {
-  debug: true,
+const config: GameConfig = {
+  collisionGroups,
+  debug: false,
   height: 600,
   initialScene: 'game',
   scenes: {

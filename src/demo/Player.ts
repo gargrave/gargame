@@ -6,16 +6,19 @@ import {
   WithAnimation,
 } from '../engine'
 
+import { CollisionGroup } from './config/collisionGroups'
+
 const D = 68
 const A = 65
 const W = 87
 const S = 83
 
 export class Player extends Entity {
-  private animator: WithAnimation
+  private readonly animator: WithAnimation
 
   constructor() {
     super({
+      collisionGroups: [CollisionGroup.player],
       height: 66,
       speed: 300,
       width: 34,
@@ -76,6 +79,7 @@ export class Player extends Entity {
     }
 
     const speed = this.speed * (dt / 1000.0)
+    // TODO: do some collision detection here
     this.move(vel.x * speed, vel.y * speed)
   }
 }

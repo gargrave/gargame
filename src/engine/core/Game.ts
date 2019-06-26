@@ -9,12 +9,14 @@ import { Scene } from './Scene'
 
 const ENV = process.env.NODE_ENV
 
-export type GameConfig = {
-  collisionGroups?: {
-    [key: string]: {
-      collidesWith?: string
-    }
+export type CollisionMap = {
+  [key: string]: {
+    collidesWith?: string[]
   }
+}
+
+export type GameConfig = {
+  collisionGroups?: CollisionMap
   debug?: boolean
   height?: number
   initialScene: string
@@ -38,6 +40,8 @@ export class Game {
   private running = false
   private lastUpdate = 0
   private input: Keyboard
+
+  get collGroups(): CollisionMap { return this.config.collisionGroups } // prettier-ignore
 
   constructor(config: GameConfig) {
     Log.info('Initializing game...')
@@ -75,7 +79,7 @@ export class Game {
     const map = this.config.scenes
     if (key in map) {
       const sceneCtor = map[key]
-      return new sceneCtor() as Scene
+      return new sceneCtor(this) as Scene
     }
 
     throw new Error(`Scene '${key} does not exist.`)

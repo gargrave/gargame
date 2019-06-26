@@ -1,12 +1,15 @@
 import { Assets, Entity, Sprite, SpriteConfig, WithSprite } from '../engine'
 
+import { CollisionGroup } from './config/collisionGroups'
+
 export class Star extends Entity {
-  constructor() {
+  constructor(x, y) {
     super({
+      collisionGroups: [CollisionGroup.star],
       height: 32,
       width: 32,
-      x: 64,
-      y: 200,
+      x,
+      y,
     })
 
     const config: SpriteConfig = {

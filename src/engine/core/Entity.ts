@@ -32,6 +32,13 @@ export abstract class Entity extends GameObject implements Drawable {
     }
   }
 
+  public onCollision(collGroup: string, other: Entity) {
+    if (collGroup === 'player') {
+      console.log('STAR COLLIDED WITH PLAYER: ', this)
+    }
+    // TODO: need a way for Entities to remove themselves
+  }
+
   public draw(ctx: CanvasRenderingContext2D) {
     this._drawBehaviors(ctx)
     if (gl.debug) {

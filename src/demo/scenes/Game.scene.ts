@@ -11,8 +11,8 @@ export class GameScene extends Scene {
     const player = new Player()
     this.add(player)
 
-    const star = new Star()
-    this.add(star)
+    this.add(new Star(64, 200))
+    this.add(new Star(256, 200))
 
     const size = 32
     this.add(new Tile(16 * size, 10 * size, size))
