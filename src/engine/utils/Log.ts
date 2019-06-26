@@ -1,10 +1,16 @@
 /* eslint-disable no-console */
-export const Log = {
-  info(value: string) {
-    console.log(value)
-  },
+export class Log {
+  private constructor() {}
 
-  warn(value: string) {
+  public static info(value: string) {
+    console.log(value)
+  }
+
+  public static warn(value: string) {
     console.warn(value)
-  },
+  }
+
+  public static assert(condition: boolean, err: string) {
+    console.assert(condition, err)
+  }
 }
