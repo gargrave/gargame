@@ -1,52 +1,99 @@
 import { Drawable } from '../interfaces/Drawable'
 import { DrawableGUI } from '../interfaces/DrawableGUI'
 import { Updateable } from '../interfaces/Updateable'
+import { Log } from '../utils/Log'
+import { exclude } from '../utils/collectionHelpers'
+import { Globals as gl } from '../Globals'
 
 import { Game } from './Game'
 import { Entity } from './Entity'
 import { GuiObject } from './GuiObject'
 
+export const DESTROY_QUEUE_INTERVAL = 1000
+
 export class Scene implements Drawable, DrawableGUI, Updateable {
-  private entities: Entity[] = []
-  private guiObjects: GuiObject[] = []
+  private lastDestroyProcess = 0
+
+  protected _entityMap: { [key: string]: Entity } = {}
+  protected _updateableEntities: string[] = []
+  protected _collidableEntities: { [key: string]: string[] } = {}
+  protected _destroyQueue: string[] = []
+
+  protected guiObjects: GuiObject[] = []
 
   protected game: Game
-  protected collidableEntities: { [key: string]: Entity[] } = {}
+
+  get entityMap() { return this._entityMap } // prettier-ignore
+  get updateableEntities() { return this._updateableEntities } // prettier-ignore
+  get collidableEntities() { return this._collidableEntities } // prettier-ignore
+  get destroyQueue() { return this._destroyQueue } // prettier-ignore
 
   constructor(game: Game) {
     this.game = game
   }
 
-  public enter() {}
+  private _processDestroyQueue() {
+    this.lastDestroyProcess = 0
+    const dq = this._destroyQueue
+    if (dq.length) {
+      Log.info(`Destroying ${dq.length} Entities`)
+
+      for (const eid of dq) {
+        const entity = this._entityMap[eid]
+        // clear this Entity from any collision groups to which it is currently registered
+        entity.collisionGroups.forEach(cg => {
+          this._collidableEntities[cg] = exclude(this._collidableEntities[cg], [
+            eid,
+          ])
+        })
+
+        delete this._entityMap[eid]
+      }
+
+      this._updateableEntities = exclude(this._updateableEntities, dq)
+      this._destroyQueue = []
+    }
+  }
+
+  public enter() {
+    gl.scene = this
+  }
 
   public exit() {
-    this.entities = []
+    this._entityMap = {}
+    this._updateableEntities = []
     this.guiObjects = []
   }
 
   public add(entity: Entity) {
-    this.entities.push(entity)
+    this._entityMap[entity.id] = entity
+    this._updateableEntities.push(entity.id)
 
-    // TODO: instead of putting the entire object ref here, it may be better to use its ID
     const coll = entity.collisionGroups || []
     coll.forEach(c => {
-      if (!(c in this.collidableEntities)) {
-        this.collidableEntities[c] = []
+      if (!(c in this._collidableEntities)) {
+        this._collidableEntities[c] = []
       }
 
-      this.collidableEntities[c].push(entity)
+      this._collidableEntities[c].push(entity.id)
     })
+  }
+
+  public addToDestroyQueue(entity: Entity) {
+    this._destroyQueue.push(entity.id)
   }
 
   public addGuiObject(g: GuiObject) {
     this.guiObjects.push(g)
   }
 
-  // TODO: need  a way of safely removing Entities
-
   public earlyUpdate(dt: number) {
-    for (const e of this.entities) {
-      e.isActive && e.earlyUpdate && e.earlyUpdate(dt)
+    let e: Entity
+    for (const eid of this._updateableEntities) {
+      e = this._entityMap[eid]
+      if (e) {
+        e.isActive && e.earlyUpdate && e.earlyUpdate(dt)
+      }
     }
 
     for (const g of this.guiObjects) {
@@ -55,27 +102,36 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   }
 
   public update(dt: number) {
-    for (const e of this.entities) {
-      e.isActive && e.update(dt)
+    let e: Entity
+    for (const eid of this._updateableEntities) {
+      e = this._entityMap[eid]
+      if (e) {
+        e.isActive && e.update(dt)
+      }
     }
 
     for (const g of this.guiObjects) g.update(dt)
 
     // TODO: call onCollisionEnter if this is a new collision
     // TODO: call onCollision if this is a recurring collision
-    // TODO: call onCOllisionExit if a previous collision has ended
-    Object.entries(this.collidableEntities).forEach(([group, entities]) => {
+    // TODO: call onCollisionExit if a previous collision has ended
+    let collisionTarget: Entity
+    Object.entries(this._collidableEntities).forEach(([group, entityIds]) => {
       //TODO: make a Lodash like get-function for this
-      const collWith = (this.game.collGroups[group] || {}).collidesWith || []
-      collWith.forEach(targetColl => {
-        const targets = this.collidableEntities[targetColl]
+      const collTargetGroups =
+        (this.game.collGroups[group] || {}).collidesWith || []
+
+      collTargetGroups.forEach(collGroup => {
+        const targets = this._collidableEntities[collGroup]
         if (targets.length) {
-          entities.forEach(e => {
-            if (e.isActive) {
-              targets.forEach(t => {
-                if (t.isActive) {
-                  if (e.bounds.overlaps(t.bounds)) {
-                    e.onCollisionEnter(targetColl, t)
+          entityIds.forEach(eid => {
+            e = this._entityMap[eid]
+            if (e && e.isActive) {
+              targets.forEach(tid => {
+                collisionTarget = this._entityMap[tid]
+                if (collisionTarget && collisionTarget.isActive) {
+                  if (e.bounds.overlaps(collisionTarget.bounds)) {
+                    e.onCollisionEnter(collGroup, collisionTarget)
                   }
                 }
               })
@@ -87,16 +143,29 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   }
 
   public lateUpdate(dt: number) {
-    for (const e of this.entities) {
-      e.isActive && e.lateUpdate && e.lateUpdate(dt)
+    let e: Entity
+    for (const eid of this._updateableEntities) {
+      e = this._entityMap[eid]
+      if (e) {
+        e.isActive && e.lateUpdate && e.lateUpdate(dt)
+      }
     }
 
     for (const g of this.guiObjects) g.lateUpdate && g.lateUpdate(dt)
+
+    this.lastDestroyProcess += dt
+    if (this.lastDestroyProcess >= DESTROY_QUEUE_INTERVAL) {
+      this._processDestroyQueue()
+    }
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
-    for (const e of this.entities) {
-      e.isActive && e.draw(ctx)
+    let e: Entity
+    for (const eid of this._updateableEntities) {
+      e = this._entityMap[eid]
+      if (e) {
+        e.isActive && e.draw(ctx)
+      }
     }
   }
 

@@ -1,4 +1,11 @@
-import { Assets, Entity, Sprite, SpriteConfig, WithSprite } from '../engine'
+import {
+  Assets,
+  Entity,
+  Globals as gl,
+  Sprite,
+  SpriteConfig,
+  WithSprite,
+} from '../engine'
 
 import { CollisionGroup } from './config/collisionGroups'
 
@@ -24,6 +31,7 @@ export class Star extends Entity {
   public onCollisionEnter(group: string, other: Entity) {
     if (group === 'player') {
       this.deactivate()
+      gl.scene.addToDestroyQueue(this)
     }
   }
 }

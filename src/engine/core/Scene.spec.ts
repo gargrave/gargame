@@ -1,6 +1,6 @@
 import { Entity, EntityConfig } from './Entity'
 import { Game } from './Game'
-import { Scene } from './Scene'
+import { DESTROY_QUEUE_INTERVAL, Scene } from './Scene'
 
 class TestEntity extends Entity {
   constructor(config: EntityConfig) {
@@ -53,7 +53,28 @@ describe('Scene', () => {
       expect(inactiveEntity.lateUpdate).toHaveBeenCalledTimes(0)
       expect(inactiveEntity.draw).toHaveBeenCalledTimes(0)
     })
+  })
 
-    it.todo('performs collision checks only on active Entities')
+  describe('Entity destroying', () => {
+    it('correctly cleans up all destroyed Entity references', () => {
+      const e1 = new TestEntity({ collisionGroups: ['cool'] })
+      const e2 = new TestEntity({ collisionGroups: ['test'] })
+      scene.add(e1)
+      scene.add(e2)
+
+      expect(Object.entries(scene.entityMap)).toHaveLength(2)
+      expect(scene.updateableEntities).toHaveLength(2)
+      expect(scene.destroyQueue).toHaveLength(0)
+
+      scene.addToDestroyQueue(e2)
+      expect(scene.destroyQueue).toHaveLength(1)
+      scene.lateUpdate(DESTROY_QUEUE_INTERVAL + 1) // trigger a "cleanup" call
+
+      expect(Object.entries(scene.entityMap)).toHaveLength(1)
+      expect(scene.updateableEntities).toHaveLength(1)
+      expect(scene.collidableEntities['cool']).toHaveLength(1)
+      expect(scene.collidableEntities['test']).toHaveLength(0)
+      expect(scene.destroyQueue).toHaveLength(0)
+    })
   })
 })
