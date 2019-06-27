@@ -33,17 +33,22 @@ export class Rect {
     this._right = this._x + this._w
   }
 
+  // TODO: add tests
+  public translate(x: number, y: number) {
+    this.setPosition(this._x + x, this._y + y)
+  }
+
   public copyFrom(other: Rect) {
     const { x, y, w, h } = other
     this.setTo(x, y, w, h)
   }
 
   public overlaps(other: Rect) {
-    if (this._x > other._right || this._right < other._x) {
+    if (this._x >= other._right || this._right <= other._x) {
       return false
     }
 
-    if (this._y > other._bottom || this._bottom < other._y) {
+    if (this._y >= other._bottom || this._bottom <= other._y) {
       return false
     }
 

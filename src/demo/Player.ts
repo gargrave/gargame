@@ -3,6 +3,7 @@ import {
   Assets,
   Entity,
   Globals as gl,
+  Rect,
   WithAnimation,
 } from '../engine'
 
@@ -22,8 +23,8 @@ export class Player extends Entity {
       height: 66,
       speed: 300,
       width: 34,
-      x: 100,
-      y: 100,
+      x: 300,
+      y: 320,
     })
 
     const h = this._height
@@ -70,6 +71,35 @@ export class Player extends Entity {
     if (i.isDown(W)) vel.y -= 1
     if (i.isDown(S)) vel.y += 1
 
+    const b = new Rect(0, 0, 0, 0)
+    b.copyFrom(this.bounds)
+    const speed = this.speed * (dt / 1000.0)
+
+    this.bounds.translate(vel.x * speed, 0)
+    const collX = gl.scene.getFirstCollision(this, CollisionGroup.tile)
+    if (collX) {
+      if (vel.x > 0) {
+        this._pos.x = collX.pos.x - this._width
+      } else if (vel.x < 0) {
+        this._pos.x = collX.bounds.right
+      }
+
+      vel.x = 0
+    }
+
+    this.bounds.copyFrom(b)
+    this.bounds.translate(0, vel.y * speed)
+    const collY = gl.scene.getFirstCollision(this, CollisionGroup.tile)
+    if (collY) {
+      if (vel.y > 0) {
+        this._pos.y = collY.pos.y - this._height
+      } else if (vel.y < 0) {
+        this._pos.y = collY.bounds.bottom
+      }
+
+      vel.y = 0
+    }
+
     if (vel.y !== 0) {
       this.animator.setCurrent('fall')
     } else if (vel.x !== 0) {
@@ -78,8 +108,6 @@ export class Player extends Entity {
       this.animator.setCurrent('idle')
     }
 
-    const speed = this.speed * (dt / 1000.0)
-    // TODO: do some collision detection here
     this.move(vel.x * speed, vel.y * speed)
   }
 }

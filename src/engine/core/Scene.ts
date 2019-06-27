@@ -142,6 +142,43 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     })
   }
 
+  public getAllCollisions(entity: Entity, targetGroup: string) {
+    const collisions: Entity[] = []
+    const targets = this._collidableEntities[targetGroup]
+    let collisionTarget: Entity
+
+    if (targets.length) {
+      for (const tid of targets) {
+        collisionTarget = this._entityMap[tid]
+        if (collisionTarget && collisionTarget.isActive) {
+          if (entity.bounds.overlaps(collisionTarget.bounds)) {
+            collisions.push(collisionTarget)
+          }
+        }
+      }
+    }
+
+    return collisions
+  }
+
+  public getFirstCollision(entity: Entity, targetGroup: string) {
+    const targets = this._collidableEntities[targetGroup]
+    let collisionTarget: Entity
+
+    if (targets.length) {
+      for (const tid of targets) {
+        collisionTarget = this._entityMap[tid]
+        if (collisionTarget && collisionTarget.isActive) {
+          if (entity.bounds.overlaps(collisionTarget.bounds)) {
+            return collisionTarget
+          }
+        }
+      }
+    }
+
+    return null
+  }
+
   public lateUpdate(dt: number) {
     let e: Entity
     for (const eid of this._updateableEntities) {

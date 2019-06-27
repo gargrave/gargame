@@ -8,7 +8,9 @@ export class Vector {
   }
 
   get x() { return this._x } // prettier-ignore
+  set x(x: number) { this._x = x } // prettier-ignore
   get y() { return this._y } // prettier-ignore
+  set y(y: number) { this._y = y } // prettier-ignore
 
   public setTo(x: number, y: number) {
     this._x = x

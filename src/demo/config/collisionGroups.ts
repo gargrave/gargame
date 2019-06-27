@@ -3,6 +3,7 @@ export const CollisionGroup = Object.freeze({
   plant: 'plant',
   player: 'player',
   star: 'star',
+  tile: 'tile',
 })
 
 export const collisionGroups = {
@@ -12,4 +13,5 @@ export const collisionGroups = {
   [CollisionGroup.star]: {
     collidesWith: ['player'],
   },
+  [CollisionGroup.tile]: {},
 }
