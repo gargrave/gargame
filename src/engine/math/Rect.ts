@@ -34,8 +34,8 @@ export class Rect {
   }
 
   // TODO: add tests
-  public translate(x: number, y: number) {
-    this.setPosition(this._x + x, this._y + y)
+  public translateFrom(other: Rect, x: number, y: number) {
+    this.setPosition(other.x + x, other.y + y)
   }
 
   public copyFrom(other: Rect) {

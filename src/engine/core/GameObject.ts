@@ -17,6 +17,7 @@ export abstract class GameObject implements Updateable {
   protected _width: number = 0
   protected _height: number = 0
   protected _bounds: Rect
+  protected _collRect: Rect
   protected _pos: Vector
   protected _prevPos: Vector
 
@@ -26,6 +27,7 @@ export abstract class GameObject implements Updateable {
   get width() { return this._width } // prettier-ignore
   get height() { return this._height } // prettier-ignore
   get bounds() { return this._bounds } // prettier-ignore
+  get collRect() { return this._collRect } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
 
@@ -41,6 +43,7 @@ export abstract class GameObject implements Updateable {
     this._pos = new Vector(x || 0, y || 0)
     this._prevPos = new Vector(x || 0, y || 0)
     this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
+    this._collRect = new Rect(this.pos.x, this.pos.y, this._width, this._height)
   }
 
   protected _updateDirtyState() {
@@ -59,6 +62,7 @@ export abstract class GameObject implements Updateable {
   protected move(x: number, y: number) {
     this._pos.translate(x, y)
     this._bounds.setPosition(this._pos.x, this._pos.y)
+    this._collRect.copyFrom(this._bounds)
   }
 
   public addBehavior(b: Behavior) {

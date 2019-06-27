@@ -130,7 +130,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
               targets.forEach(tid => {
                 collisionTarget = this._entityMap[tid]
                 if (collisionTarget && collisionTarget.isActive) {
-                  if (e.bounds.overlaps(collisionTarget.bounds)) {
+                  if (e.collRect.overlaps(collisionTarget.collRect)) {
                     e.onCollisionEnter(collGroup, collisionTarget)
                   }
                 }
@@ -142,25 +142,6 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     })
   }
 
-  public getAllCollisions(entity: Entity, targetGroup: string) {
-    const collisions: Entity[] = []
-    const targets = this._collidableEntities[targetGroup]
-    let collisionTarget: Entity
-
-    if (targets.length) {
-      for (const tid of targets) {
-        collisionTarget = this._entityMap[tid]
-        if (collisionTarget && collisionTarget.isActive) {
-          if (entity.bounds.overlaps(collisionTarget.bounds)) {
-            collisions.push(collisionTarget)
-          }
-        }
-      }
-    }
-
-    return collisions
-  }
-
   public getFirstCollision(entity: Entity, targetGroup: string) {
     const targets = this._collidableEntities[targetGroup]
     let collisionTarget: Entity
@@ -169,7 +150,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
       for (const tid of targets) {
         collisionTarget = this._entityMap[tid]
         if (collisionTarget && collisionTarget.isActive) {
-          if (entity.bounds.overlaps(collisionTarget.bounds)) {
+          if (entity.collRect.overlaps(collisionTarget.collRect)) {
             return collisionTarget
           }
         }

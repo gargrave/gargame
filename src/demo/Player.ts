@@ -71,11 +71,9 @@ export class Player extends Entity {
     if (i.isDown(W)) vel.y -= 1
     if (i.isDown(S)) vel.y += 1
 
-    const b = new Rect(0, 0, 0, 0)
-    b.copyFrom(this.bounds)
     const speed = this.speed * (dt / 1000.0)
 
-    this.bounds.translate(vel.x * speed, 0)
+    this._collRect.translateFrom(this._bounds, vel.x * speed, 0)
     const collX = gl.scene.getFirstCollision(this, CollisionGroup.tile)
     if (collX) {
       if (vel.x > 0) {
@@ -87,8 +85,7 @@ export class Player extends Entity {
       vel.x = 0
     }
 
-    this.bounds.copyFrom(b)
-    this.bounds.translate(0, vel.y * speed)
+    this._collRect.translateFrom(this._bounds, 0, vel.y * speed)
     const collY = gl.scene.getFirstCollision(this, CollisionGroup.tile)
     if (collY) {
       if (vel.y > 0) {
