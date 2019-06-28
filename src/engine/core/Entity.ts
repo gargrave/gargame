@@ -54,6 +54,14 @@ export abstract class Entity extends GameObject implements Drawable {
     Log.warn(`onCollisionEnter not implemented for: ${this.constructor.name}`)
   }
 
+  public onCollision(group: string, other: Entity) {
+    console.log('onCollision')
+  }
+
+  public onCollisionExit(group: string, other: Entity) {
+    console.log('onCollisionExit')
+  }
+
   public draw(ctx: CanvasRenderingContext2D) {
     this._drawBehaviors(ctx)
     if (gl.debug) {

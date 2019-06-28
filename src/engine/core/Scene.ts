@@ -10,6 +10,7 @@ import { Entity } from './Entity'
 import { GuiObject } from './GuiObject'
 
 export const DESTROY_QUEUE_INTERVAL = 1000
+const COLLISION_KEY_DELIMITER = '&&'
 
 export class Scene implements Drawable, DrawableGUI, Updateable {
   private lastDestroyProcess = 0
@@ -18,6 +19,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   protected _updateableEntities: string[] = []
   protected _collidableEntities: { [key: string]: string[] } = {}
   protected _destroyQueue: string[] = []
+  protected _currentCollisions: { [key: string]: string }
 
   protected guiObjects: GuiObject[] = []
 
@@ -30,6 +32,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
 
   constructor(game: Game) {
     this.game = game
+    this._currentCollisions = {}
   }
 
   private _processDestroyQueue() {
@@ -62,6 +65,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   public exit() {
     this._entityMap = {}
     this._updateableEntities = []
+    this._currentCollisions = {}
     this.guiObjects = []
   }
 
@@ -101,21 +105,13 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     }
   }
 
-  public update(dt: number) {
+  private _processAutoCollisions() {
+    const previousColl = this._currentCollisions
+    const newColl = {}
+
     let e: Entity
-    for (const eid of this._updateableEntities) {
-      e = this._entityMap[eid]
-      if (e) {
-        e.isActive && e.update(dt)
-      }
-    }
-
-    for (const g of this.guiObjects) g.update(dt)
-
-    // TODO: call onCollisionEnter if this is a new collision
-    // TODO: call onCollision if this is a recurring collision
-    // TODO: call onCollisionExit if a previous collision has ended
     let collisionTarget: Entity
+
     Object.entries(this._collidableEntities).forEach(([group, entityIds]) => {
       //TODO: make a Lodash like get-function for this
       const collTargetGroups =
@@ -131,7 +127,25 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
                 collisionTarget = this._entityMap[tid]
                 if (collisionTarget && collisionTarget.isActive) {
                   if (e.collRect.overlaps(collisionTarget.collRect)) {
-                    e.onCollisionEnter(collGroup, collisionTarget)
+                    const collKey = `${e.id}${COLLISION_KEY_DELIMITER}${collisionTarget.id}`
+                    if (previousColl[collKey]) {
+                      // TODO: need a way to abstract/shorten all calls like this
+                      if (e && e.isActive) {
+                        if (collisionTarget && collisionTarget.isActive) {
+                          e.onCollision(collGroup, collisionTarget)
+                        }
+                      }
+
+                      delete previousColl[collKey]
+                    } else {
+                      if (e && e.isActive) {
+                        if (collisionTarget && collisionTarget.isActive) {
+                          e.onCollisionEnter(collGroup, collisionTarget)
+                        }
+                      }
+                    }
+
+                    newColl[collKey] = collGroup
                   }
                 }
               })
@@ -140,6 +154,35 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
         }
       })
     })
+
+    // any keys remaining here are no longer colliding
+    Object.entries(previousColl).forEach(([collKey, collGroup]) => {
+      const [entityId, targetId] = collKey.split(COLLISION_KEY_DELIMITER)
+      const entity = this.entityMap[entityId]
+      const target = this.entityMap[targetId]
+
+      if (entity && entity.isActive) {
+        if (target && target.isActive) {
+          entity.onCollisionExit(collGroup, target)
+        }
+      }
+    })
+
+    this._currentCollisions = newColl
+  }
+
+  public update(dt: number) {
+    let e: Entity
+    for (const eid of this._updateableEntities) {
+      e = this._entityMap[eid]
+      if (e) {
+        e.isActive && e.update(dt)
+      }
+    }
+
+    for (const g of this.guiObjects) g.update(dt)
+
+    this._processAutoCollisions()
   }
 
   public getFirstCollision(entity: Entity, targetGroup: string) {
