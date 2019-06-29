@@ -66,7 +66,6 @@ export abstract class GameObject implements Updateable {
   }
 
   public addBehavior(b: Behavior) {
-    // TODO: ensure behavior is not already there
     this.behaviors.push(b)
   }
 

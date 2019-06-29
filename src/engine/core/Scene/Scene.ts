@@ -1,16 +1,15 @@
-import { Drawable } from '../interfaces/Drawable'
-import { DrawableGUI } from '../interfaces/DrawableGUI'
-import { Updateable } from '../interfaces/Updateable'
-import { Log } from '../utils/Log'
-import { exclude } from '../utils/collectionHelpers'
-import { Globals as gl } from '../Globals'
-
-import { Game } from './Game'
-import { Entity } from './Entity'
-import { GuiObject } from './GuiObject'
+import { Drawable } from '../../interfaces/Drawable'
+import { DrawableGUI } from '../../interfaces/DrawableGUI'
+import { Updateable } from '../../interfaces/Updateable'
+import { Log } from '../../utils/Log'
+import { exclude } from '../../utils/collectionHelpers'
+import { Globals as gl } from '../../Globals'
+import { Game } from '../Game'
+import { Entity } from '../Entity'
+import { GuiObject } from '../GuiObject'
+import { SceneCollisions } from './SceneCollisions'
 
 export const DESTROY_QUEUE_INTERVAL = 1000
-const COLLISION_KEY_DELIMITER = '&&'
 
 export class Scene implements Drawable, DrawableGUI, Updateable {
   private lastDestroyProcess = 0
@@ -20,6 +19,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   protected _collidableEntities: { [key: string]: string[] } = {}
   protected _destroyQueue: string[] = []
   protected _currentCollisions: { [key: string]: string }
+  protected _collisionHandler: SceneCollisions
 
   protected guiObjects: GuiObject[] = []
 
@@ -29,10 +29,13 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   get updateableEntities() { return this._updateableEntities } // prettier-ignore
   get collidableEntities() { return this._collidableEntities } // prettier-ignore
   get destroyQueue() { return this._destroyQueue } // prettier-ignore
+  get currentCollisions() { return this._currentCollisions } // prettier-ignore
+  get collisionHandler() { return this._collisionHandler } // prettier-ignore
 
   constructor(game: Game) {
     this.game = game
     this._currentCollisions = {}
+    this._collisionHandler = new SceneCollisions(this)
   }
 
   private _processDestroyQueue() {
@@ -105,72 +108,6 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     }
   }
 
-  private _processAutoCollisions() {
-    const previousColl = this._currentCollisions
-    const newColl = {}
-
-    let e: Entity
-    let collisionTarget: Entity
-
-    Object.entries(this._collidableEntities).forEach(([group, entityIds]) => {
-      //TODO: make a Lodash like get-function for this
-      const collTargetGroups =
-        (this.game.collGroups[group] || {}).collidesWith || []
-
-      collTargetGroups.forEach(collGroup => {
-        const targets = this._collidableEntities[collGroup]
-        if (targets.length) {
-          entityIds.forEach(eid => {
-            e = this._entityMap[eid]
-            if (e && e.isActive) {
-              targets.forEach(tid => {
-                collisionTarget = this._entityMap[tid]
-                if (collisionTarget && collisionTarget.isActive) {
-                  if (e.collRect.overlaps(collisionTarget.collRect)) {
-                    const collKey = `${e.id}${COLLISION_KEY_DELIMITER}${collisionTarget.id}`
-                    if (previousColl[collKey]) {
-                      // TODO: need a way to abstract/shorten all calls like this
-                      if (e && e.isActive) {
-                        if (collisionTarget && collisionTarget.isActive) {
-                          e.onCollision(collGroup, collisionTarget)
-                        }
-                      }
-
-                      delete previousColl[collKey]
-                    } else {
-                      if (e && e.isActive) {
-                        if (collisionTarget && collisionTarget.isActive) {
-                          e.onCollisionEnter(collGroup, collisionTarget)
-                        }
-                      }
-                    }
-
-                    newColl[collKey] = collGroup
-                  }
-                }
-              })
-            }
-          })
-        }
-      })
-    })
-
-    // any keys remaining here are no longer colliding
-    Object.entries(previousColl).forEach(([collKey, collGroup]) => {
-      const [entityId, targetId] = collKey.split(COLLISION_KEY_DELIMITER)
-      const entity = this.entityMap[entityId]
-      const target = this.entityMap[targetId]
-
-      if (entity && entity.isActive) {
-        if (target && target.isActive) {
-          entity.onCollisionExit(collGroup, target)
-        }
-      }
-    })
-
-    this._currentCollisions = newColl
-  }
-
   public update(dt: number) {
     let e: Entity
     for (const eid of this._updateableEntities) {
@@ -182,25 +119,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
 
     for (const g of this.guiObjects) g.update(dt)
 
-    this._processAutoCollisions()
-  }
-
-  public getFirstCollision(entity: Entity, targetGroup: string) {
-    const targets = this._collidableEntities[targetGroup]
-    let collisionTarget: Entity
-
-    if (targets.length) {
-      for (const tid of targets) {
-        collisionTarget = this._entityMap[tid]
-        if (collisionTarget && collisionTarget.isActive) {
-          if (entity.collRect.overlaps(collisionTarget.collRect)) {
-            return collisionTarget
-          }
-        }
-      }
-    }
-
-    return null
+    this._currentCollisions = this.collisionHandler.updateAutoCollisions()
   }
 
   public lateUpdate(dt: number) {

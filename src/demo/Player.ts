@@ -3,7 +3,6 @@ import {
   Assets,
   Entity,
   Globals as gl,
-  Rect,
   WithAnimation,
 } from '../engine'
 
@@ -72,9 +71,10 @@ export class Player extends Entity {
     if (i.isDown(S)) vel.y += 1
 
     const speed = this.speed * (dt / 1000.0)
+    const sceneColl = gl.scene.collisionHandler
 
     this._collRect.translateFrom(this._bounds, vel.x * speed, 0)
-    const collX = gl.scene.getFirstCollision(this, CollisionGroup.tile)
+    const collX = sceneColl.getFirstCollision(this, CollisionGroup.tile)
     if (collX) {
       if (vel.x > 0) {
         this._pos.x = collX.pos.x - this._width
@@ -86,7 +86,7 @@ export class Player extends Entity {
     }
 
     this._collRect.translateFrom(this._bounds, 0, vel.y * speed)
-    const collY = gl.scene.getFirstCollision(this, CollisionGroup.tile)
+    const collY = sceneColl.getFirstCollision(this, CollisionGroup.tile)
     if (collY) {
       if (vel.y > 0) {
         this._pos.y = collY.pos.y - this._height
