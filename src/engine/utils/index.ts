@@ -1,4 +1,3 @@
-export * from './collectionHelpers'
 export * from './domHelpers'
+export * from './ggdash'
 export * from './Log'
-export * from './mathHelpers'

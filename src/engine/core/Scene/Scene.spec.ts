@@ -1,5 +1,5 @@
-import { Entity, EntityConfig } from './Entity'
-import { Game } from './Game'
+import { Entity, EntityConfig } from '../Entity'
+import { Game } from '../Game'
 import { DESTROY_QUEUE_INTERVAL, Scene } from './Scene'
 
 class TestEntity extends Entity {
