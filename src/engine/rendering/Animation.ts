@@ -1,8 +1,9 @@
+import { CurriedNumberFn, wrap } from '@gargrave/ggdash'
+
 import { Entity } from '../core/Entity'
 import { Drawable } from '../interfaces/Drawable'
 import { Updateable } from '../interfaces/Updateable'
 import { Texture } from '../resources/Texture'
-import { CurriedNumberFn, wrap } from '../utils/ggdash'
 
 import { Sprite } from './Sprite'
 

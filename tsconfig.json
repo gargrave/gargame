@@ -13,6 +13,10 @@
     "noEmit": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
+    "paths": {
+      "@gargrave/ggdash": ["ggdash"],
+      "@gargrave/ggdash/*": ["ggdash/*"]
+    },
     "resolveJsonModule": true,
     "skipLibCheck": false,
     "strict": true,

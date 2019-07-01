@@ -1,7 +1,8 @@
+import { exclude } from '@gargrave/ggdash'
+
 import { Drawable } from '../../interfaces/Drawable'
 import { DrawableGUI } from '../../interfaces/DrawableGUI'
 import { Updateable } from '../../interfaces/Updateable'
-import { exclude } from '../../utils/ggdash'
 import { Log } from '../../utils/Log'
 import { Globals as gl } from '../../Globals'
 import { Game } from '../Game'
