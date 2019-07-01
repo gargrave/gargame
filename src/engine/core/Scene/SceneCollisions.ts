@@ -1,3 +1,5 @@
+import { get } from '@gargrave/ggdash'
+
 import { Entity } from '../Entity'
 import { Globals as gl } from '../../Globals'
 
@@ -26,9 +28,11 @@ export class SceneCollisions {
     let target: Entity
 
     Object.entries(collChecks).forEach(([group, entityIds]) => {
-      //TODO: make a Lodash like get-function for this
-      const collTargetGroups =
-        (gl.game.collGroups[group] || {}).collidesWith || []
+      const collTargetGroups = get(
+        gl.game,
+        `collGroups.${group}.collidesWith`,
+        [],
+      ) as any[] // eslint-disable-line
 
       collTargetGroups.forEach(collGroup => {
         const collTargetIds = collChecks[collGroup]
