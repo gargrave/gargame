@@ -69,7 +69,7 @@ export class Game {
     const gameWrapper = initGameWrapper()
     const w = this.config.width
     const h = this.config.height
-    const bgConfig = { id: 'bg', styles: { background: '#ccc' } }
+    const bgConfig = { id: 'bg', styles: { background: '#666' } }
     this.bgCtx = getNewCanvasContext(gameWrapper, w, h, bgConfig)
     this.mainCtx = getNewCanvasContext(gameWrapper, w, h, { id: 'main' })
     this.guiCtx = getNewCanvasContext(gameWrapper, w, h, { id: 'gui' })

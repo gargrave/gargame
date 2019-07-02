@@ -1,20 +1,20 @@
 import { Game, GameConfig } from '../engine'
 
 import { collisionGroups } from './config/collisionGroups'
-import { assetMap } from './assets'
+import { assetMap } from './config/assets'
 import { GameScene } from './scenes/Game.scene'
 import { TitleScene } from './scenes/Title.scene'
 
 const config: GameConfig = {
   collisionGroups,
   debug: false,
-  height: 600,
+  height: 720,
   initialScene: 'game',
   scenes: {
     game: GameScene,
     title: TitleScene,
   },
-  width: 960,
+  width: 1280,
 }
 
 const game = new Game(config) // eslint-disable-line
