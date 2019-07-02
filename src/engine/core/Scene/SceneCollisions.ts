@@ -94,7 +94,7 @@ export class SceneCollisions {
     const entities = this.scene.entityMap
 
     let target: Entity
-    if (collTargetGroup.length) {
+    if (collTargetGroup && collTargetGroup.length) {
       for (const tid of collTargetGroup) {
         target = entities[tid]
         if (target && target.isActive) {
