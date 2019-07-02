@@ -1,5 +1,5 @@
+import { CurriedNumberFn } from '../ggdash.types'
 import { wrap } from './wrap'
-import { CurriedNumberFn } from './numbers.types'
 
 describe('ggdash :: wrap', () => {
   it('returns "max" if value is less than "min"', () => {

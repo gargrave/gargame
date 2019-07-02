@@ -1,5 +1,5 @@
 import { clamp } from './clamp'
-import { CurriedNumberFn } from './numbers.types'
+import { CurriedNumberFn } from '../ggdash.types'
 
 describe('clamp', () => {
   it('returns "min" if the value is less than "min', () => {
