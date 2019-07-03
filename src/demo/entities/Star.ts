@@ -5,9 +5,9 @@ import {
   Sprite,
   SpriteConfig,
   WithSprite,
-} from '../engine'
+} from '../../engine'
 
-import { CollisionGroup } from './config/collisionGroups'
+import { CollisionGroup } from '../config/collisionGroups'
 
 export class Star extends Entity {
   constructor(x, y) {

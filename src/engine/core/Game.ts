@@ -111,7 +111,7 @@ export class Game {
 
   public mainLoop = () => {
     const now = Date.now()
-    const dt = now - this.lastUpdate
+    const dt = now - (this.lastUpdate || now)
     this.lastUpdate = now
 
     this.earlyUpdate(dt)

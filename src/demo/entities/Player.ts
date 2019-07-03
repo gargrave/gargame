@@ -4,9 +4,9 @@ import {
   Entity,
   Globals as gl,
   WithAnimation,
-} from '../engine'
+} from '../../engine'
 
-import { CollisionGroup } from './config/collisionGroups'
+import { CollisionGroup } from '../config/collisionGroups'
 
 const D = 68
 const A = 65

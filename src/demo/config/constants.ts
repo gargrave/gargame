@@ -1,5 +1,6 @@
 export const MAP_SIZE = [40, 23]
 export const MAPS_PER_ROW = 6
+export const MAX_LEVEL = 17
 export const TILE_SIZE = 32
 
 /* eslint-disable sort-keys */

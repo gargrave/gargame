@@ -17,28 +17,15 @@ export class GameScene extends Scene {
   public enter() {
     super.enter()
 
-    // this.add(new Tile(16 * size, 10 * size, size))
-    // this.add(new Tile(16 * size, 11 * size, size))
-    // this.add(new Tile(8 * size, 10 * size, size))
-    // this.add(new Tile(8 * size, 11 * size, size))
-    //
-    // this.add(new Tile(10 * size, 8 * size, size))
-    // this.add(new Tile(11 * size, 8 * size, size))
-    // this.add(new Tile(10 * size, 13 * size, size))
-    // this.add(new Tile(11 * size, 13 * size, size))
-    //
     // this.addGuiObject(new Label('This is a label!', { x: 10, y: 24 }))
 
-    console.log('Loading...')
-    const mapAssets = this.map.loadMap()
-    console.log('Done loading...')
-    console.log({ mapAssets })
+    const mapAssets = this.map.loadMap(1)
 
     // instantiate player
     const player = new Player()
     player.pos.setTo(
       mapAssets.player.x * TILE_SIZE,
-      mapAssets.player.y * TILE_SIZE,
+      mapAssets.player.y * TILE_SIZE - player.height / 2 - 1,
     )
     this.add(player)
 
@@ -52,9 +39,14 @@ export class GameScene extends Scene {
     // TODO: create a sign Entity, and instantiate it!
 
     // instantiate tiles
+    const tilePosMap: { [key: string]: Tile } = {}
     mapAssets.tiles.forEach(_tile => {
-      const tile = new Tile(_tile.x * TILE_SIZE, _tile.y * TILE_SIZE, TILE_SIZE)
+      const tile = new Tile(_tile.x, _tile.y, TILE_SIZE)
+      tilePosMap[`${_tile.x}__${_tile.y}`] = tile
       this.add(tile)
+    })
+    Object.values(tilePosMap).forEach((tile: Tile) => {
+      tile.setSpriteByNeighbors(tilePosMap)
     })
 
     if (process.env.NODE_ENV === 'development') {

@@ -4,6 +4,7 @@ import { collisionGroups } from './config/collisionGroups'
 import { assetMap } from './config/assets'
 import { GameScene } from './scenes/Game.scene'
 import { TitleScene } from './scenes/Title.scene'
+import { TileSprites } from './config/TileSprites'
 
 const config: GameConfig = {
   collisionGroups,
@@ -23,5 +24,6 @@ game.load(assetMap).then(() => {
   const w = window as any // eslint-disable-line
   w.go = () => game.start()
   w.no = () => game.stop()
+  TileSprites.init()
   game.start()
 })
