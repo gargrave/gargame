@@ -1,12 +1,17 @@
-import { Updateable } from '../interfaces/Updateable'
+import { InputHandler } from '../interfaces/InputHandler'
 
-export class Keyboard implements Updateable {
+export class Keyboard implements InputHandler {
   private kbState: { [key: string]: boolean } = {}
   private prevKbState: { [key: string]: boolean } = {}
 
   constructor() {
     window.addEventListener('keydown', this.onKeyDown)
     window.addEventListener('keyup', this.onKeyUp)
+  }
+
+  public destroy() {
+    window.removeEventListener('keydown', this.onKeyDown)
+    window.removeEventListener('keyup', this.onKeyUp)
   }
 
   public onKeyDown = (e: KeyboardEvent) => {

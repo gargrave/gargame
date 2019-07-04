@@ -1,13 +1,11 @@
 import { Game } from './core/Game'
 import { Scene } from './core/Scene'
-import { Keyboard } from './input/Keyboard'
 import { Log } from './utils/Log'
 
 const ENV = process.env.NODE_ENV
 
 let _debug = false
 let _game: Game
-let _input: Keyboard
 let _scene: Scene
 
 export class Globals {
@@ -30,7 +28,4 @@ export class Globals {
 
   static get scene() { return _scene } // prettier-ignore
   static set scene(scene: Scene) { _scene = scene } // prettier-ignore
-
-  static get input() { return _input } // prettier-ignore
-  static set input(input: Keyboard) { _input = input } // prettier-ignore
 }

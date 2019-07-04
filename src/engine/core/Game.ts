@@ -1,4 +1,4 @@
-import { Keyboard } from '../input/Keyboard'
+import { Input } from '../input/Input'
 import { Assets } from '../resources/Assets'
 import { Loader } from '../resources/Loader'
 import { getNewCanvasContext, initGameWrapper } from '../utils/domHelpers'
@@ -39,7 +39,6 @@ export class Game {
 
   private running = false
   private lastUpdate = 0
-  private input: Keyboard
 
   get collGroups(): CollisionMap { return this.config.collisionGroups } // prettier-ignore
 
@@ -48,11 +47,10 @@ export class Game {
 
     this.config = config
     this.setupDOM()
-    this.input = new Keyboard()
+    Input.init()
 
     gl.debug = config.debug || false
     gl.game = this
-    gl.input = this.input
 
     if (ENV === 'development') {
       Log.info('Adding "gg" helper to window for development mode!')
@@ -143,17 +141,18 @@ export class Game {
   }
 
   public earlyUpdate(dt: number) {
+    Input.earlyUpdate(dt)
     this._handlePendingSceneTransition()
     this.scene.earlyUpdate(dt)
   }
 
   public update(dt: number) {
-    this.input.update(dt)
+    Input.update(dt)
     this.scene.update(dt)
   }
 
   public lateUpdate(dt: number) {
-    this.input.lateUpdate(dt)
+    Input.lateUpdate(dt)
     this.scene.lateUpdate(dt)
     this.sceneHasTransitioned = false
   }

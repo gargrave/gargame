@@ -1,5 +1,6 @@
 export * from './Behavior'
 export * from './Drawable'
 export * from './DrawableGUI'
+export * from './InputHandler'
 export * from './Loadable'
 export * from './Updateable'
