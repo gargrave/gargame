@@ -37,17 +37,21 @@ export class Input {
     }
   }
 
-  public static isDown(cmd: string): boolean {
+  public static isDown(cmd: string[]): boolean {
     for (const c of Input.controllers) {
-      if (c.isDown(cmd)) return true
+      for (const ctrl of cmd) {
+        if (c.isDown(ctrl)) return true
+      }
     }
 
     return false
   }
 
-  public static wasPressed(cmd: string): boolean {
+  public static wasPressed(cmd: string[]): boolean {
     for (const c of Input.controllers) {
-      if (c.wasPressed(cmd)) return true
+      for (const ctrl of cmd) {
+        if (c.wasPressed(ctrl)) return true
+      }
     }
 
     return false
