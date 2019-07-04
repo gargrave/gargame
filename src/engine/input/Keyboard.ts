@@ -1,8 +1,8 @@
 import { Updateable } from '../interfaces/Updateable'
 
 export class Keyboard implements Updateable {
-  private kbState: { [key: number]: boolean } = {}
-  private prevKbState: { [key: number]: boolean } = {}
+  private kbState: { [key: string]: boolean } = {}
+  private prevKbState: { [key: string]: boolean } = {}
 
   constructor() {
     window.addEventListener('keydown', this.onKeyDown)
@@ -10,24 +10,26 @@ export class Keyboard implements Updateable {
   }
 
   public onKeyDown = (e: KeyboardEvent) => {
-    this.kbState[e.keyCode] = true
+    this.kbState[e.code] = true
   }
 
   public onKeyUp = (e: KeyboardEvent) => {
-    this.kbState[e.keyCode] = false
+    this.kbState[e.code] = false
   }
 
-  public update(dt: number) {}
+  public update(dt: number) {
+    // currently no need for any per-frame updates
+  }
 
   public lateUpdate(dt: number) {
     this.prevKbState = { ...this.kbState }
   }
 
-  public isDown(key: number) {
+  public isDown(key: string) {
     return this.kbState[key]
   }
 
-  public wasPressed(key: number) {
+  public wasPressed(key: string) {
     return this.kbState[key] && !this.prevKbState[key]
   }
 }
