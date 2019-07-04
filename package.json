@@ -1,6 +1,6 @@
 {
   "name": "@gargrave/gargame",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": "dist/gargame.js",
   "author": "Gabe Hargrave <gkhargrave@gmail.com>",
   "license": "MIT",
