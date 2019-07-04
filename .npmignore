@@ -1,0 +1,16 @@
+.idea
+.vscode
+config
+node_modules
+src
+
+.babelrc
+.eslintignore
+.eslintrc
+.gitignore
+.npmignore
+.prettierignore
+.prettierrc
+jest.config.js
+tsconfig.json
+yarn.lock

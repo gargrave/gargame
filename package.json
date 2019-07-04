@@ -1,14 +1,16 @@
 {
   "name": "@gargrave/gargame",
-  "version": "0.1.0",
-  "main": "index.js",
+  "version": "0.1.4",
+  "main": "dist/gargame.js",
   "author": "Gabe Hargrave <gkhargrave@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config config/webpack.prod.js",
-    "start": "webpack-dev-server --config config/webpack.dev.js --watch",
+    "build": "yarn build:ts && webpack --config config/webpack.prod.js",
+    "build:ts": "tsc --emitDeclarationOnly",
+    "start": "yarn build:ts && webpack --config config/webpack.dev.js --watch",
     "test": "jest --watch",
-    "lint": "eslint --ext .ts ./src"
+    "lint": "eslint --ext .ts ./src",
+    "release": "yarn build && np --yolo --no-publish --no-release-draft"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -24,7 +26,6 @@
     "babel-loader": "^8.0.6",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^5.0.0",
-    "html-webpack-plugin": "^3.2.0",
     "jest": "^24.8.0",
     "typescript": "^3.5.2",
     "webpack": "^4.33.0",

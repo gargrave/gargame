@@ -1,12 +1,13 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const APP_ROOT = '../'
 
 module.exports = {
   entry: './src/index.ts',
   output: {
-    filename: 'main.js',
+    filename: 'gargame.js',
+    library: 'gg',
+    libraryTarget: 'umd',
     path: path.resolve(__dirname, '../dist'),
   },
   //
@@ -30,11 +31,5 @@ module.exports = {
     ],
   },
   //
-  plugins: [
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: 'public/index.html',
-      title: 'Gengine',
-    }),
-  ],
+  plugins: [],
 }
