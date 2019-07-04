@@ -24,6 +24,8 @@ export abstract class GameObject implements Updateable {
   protected _speed = 0
   protected _dirty = true
 
+  protected _currentSpeed = new Vector(0, 0)
+
   get width() { return this._width } // prettier-ignore
   get height() { return this._height } // prettier-ignore
   get bounds() { return this._bounds } // prettier-ignore
@@ -31,8 +33,6 @@ export abstract class GameObject implements Updateable {
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
 
-  get speed() { return this._speed } // prettier-ignore
-  set speed(speed: number) { this._speed = speed } // prettier-ignore
   get dirty() { return this._dirty } // prettier-ignore
 
   protected constructor(config: GameObjectConfig) {
@@ -59,7 +59,10 @@ export abstract class GameObject implements Updateable {
     }
   }
 
-  protected move(x: number, y: number) {
+  protected move(
+    x: number = this._currentSpeed.x,
+    y: number = this._currentSpeed.y,
+  ) {
     this._pos.translate(x, y)
     this._bounds.setPosition(this._pos.x, this._pos.y)
     this._collRect.copyFrom(this._bounds)
