@@ -4,13 +4,14 @@
   "main": "dist/gargame.js",
   "author": "Gabe Hargrave <gkhargrave@gmail.com>",
   "license": "MIT",
+  "repository": "https://github.com/gargrave/gargame",
   "scripts": {
     "build": "yarn build:ts && webpack --config config/webpack.prod.js",
     "build:ts": "tsc --emitDeclarationOnly",
     "start": "yarn build:ts && webpack --config config/webpack.dev.js --watch",
     "test": "jest --watch",
     "lint": "eslint --ext .ts ./src",
-    "release": "yarn build && np --yolo --no-publish --no-release-draft"
+    "release": "jest && yarn build && np --yolo --no-release-draft"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
