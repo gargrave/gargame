@@ -14,16 +14,28 @@ export class Sprite implements Drawable {
   constructor(private host: Entity, private config: SpriteConfig) {}
 
   public draw(ctx: CanvasRenderingContext2D) {
+    const { x: sx, y: sy } = this.host.scale
+    const { height, width } = this.config
+
+    ctx.save()
+
+    // translate context accordingly for flipped Sprites
+    if (sx === -1) ctx.translate(width, 0)
+    if (sy === -1) ctx.translate(0, height)
+    ctx.scale(sx, sy)
+
     ctx.drawImage(
       this.config.texture.img,
-      this.config.x || 0,
+      this.config.x || 0, // texture-sub-rect positions
       this.config.y || 0,
-      this.config.width,
-      this.config.height,
-      this.host.pos.x,
-      this.host.pos.y,
-      this.config.width,
-      this.config.height,
+      width, // texture sub-rect sizes
+      height,
+      this.host.pos.x * sx, // canvas draw positions
+      this.host.pos.y * sy,
+      width, // canvas draw-rect sizes
+      height,
     )
+
+    ctx.restore()
   }
 }

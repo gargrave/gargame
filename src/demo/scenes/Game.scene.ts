@@ -1,4 +1,4 @@
-import { Label, Scene } from '../../engine'
+import { Scene } from '../../engine'
 
 import { TILE_SIZE } from '../config/constants'
 import { Player } from '../entities/Player'

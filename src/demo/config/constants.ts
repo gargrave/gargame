@@ -2,6 +2,8 @@ export const MAP_SIZE = [40, 23]
 export const MAPS_PER_ROW = 6
 export const MAX_LEVEL = 17
 export const TILE_SIZE = 32
+export const GRAVITY = 25
+export const TERMINAL_VELOCITY = 36
 
 /* eslint-disable sort-keys */
 export const COLORS = {

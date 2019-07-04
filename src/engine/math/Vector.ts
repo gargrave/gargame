@@ -1,16 +1,20 @@
 export class Vector {
+  public static sum(a: Vector, b: Vector) {
+    return new Vector(a.x + b.x, a.y + b.y)
+  }
+
   private _x: number
   private _y: number
-
-  constructor(x: number, y: number) {
-    this._x = x
-    this._y = y
-  }
 
   get x() { return this._x } // prettier-ignore
   set x(x: number) { this._x = x } // prettier-ignore
   get y() { return this._y } // prettier-ignore
   set y(y: number) { this._y = y } // prettier-ignore
+
+  constructor(x: number, y: number) {
+    this._x = x
+    this._y = y
+  }
 
   public setTo(x: number, y: number) {
     this._x = x

@@ -1,3 +1,4 @@
+import { clamp, CurriedNumberFn } from '@gargrave/ggdash'
 import { Behavior } from '../interfaces/Behavior'
 import { Updateable } from '../interfaces/Updateable'
 import { Rect } from '../math/Rect'
@@ -11,11 +12,14 @@ export type GameObjectConfig = {
   y?: number
 }
 
+const scaleClamper = clamp(-1, 1) as CurriedNumberFn
+
 export abstract class GameObject implements Updateable {
   protected behaviors: Behavior[] = []
 
   protected _width: number = 0
   protected _height: number = 0
+  protected _scale = new Vector(1, 1)
   protected _bounds: Rect
   protected _collRect: Rect
   protected _pos: Vector
@@ -28,6 +32,7 @@ export abstract class GameObject implements Updateable {
 
   get width() { return this._width } // prettier-ignore
   get height() { return this._height } // prettier-ignore
+  get scale() { return this._scale } // prettier-ignore
   get bounds() { return this._bounds } // prettier-ignore
   get collRect() { return this._collRect } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
@@ -37,13 +42,14 @@ export abstract class GameObject implements Updateable {
 
   protected constructor(config: GameObjectConfig) {
     const { height, speed, width, x, y } = config
+
     this._width = width || 0
-    this._speed = speed || 0
     this._height = height || 0
     this._pos = new Vector(x || 0, y || 0)
     this._prevPos = new Vector(x || 0, y || 0)
     this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
     this._collRect = new Rect(this.pos.x, this.pos.y, this._width, this._height)
+    this._speed = speed || 0
   }
 
   protected _updateDirtyState() {
@@ -67,6 +73,9 @@ export abstract class GameObject implements Updateable {
     this._bounds.setPosition(this._pos.x, this._pos.y)
     this._collRect.copyFrom(this._bounds)
   }
+
+  public setScaleX(val: number) { this._scale.x = scaleClamper(val) } // prettier-ignore
+  public setScaleY(val: number) { this._scale.y = scaleClamper(val) } // prettier-ignore
 
   public addBehavior(b: Behavior) {
     this.behaviors.push(b)

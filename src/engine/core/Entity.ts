@@ -1,4 +1,4 @@
-import { Colors } from '../constants/colors'
+import { DebugColors } from '../constants/colors'
 import { Drawable } from '../interfaces/Drawable'
 import { Rect } from '../math/Rect'
 import { Primitive } from '../rendering/Primitive'
@@ -13,7 +13,7 @@ export type EntityConfig = GameObjectConfig & {
 }
 
 const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
-  Primitive.Stroke.rect(ctx, Colors.Debug.Bounds, bounds, 1)
+  Primitive.Stroke.rect(ctx, DebugColors.Bounds, bounds, 1)
 
 export abstract class Entity extends GameObject implements Drawable {
   private static nextId = 0

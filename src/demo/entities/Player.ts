@@ -1,3 +1,4 @@
+import { clamp } from '@gargrave/ggdash'
 import {
   Animation,
   Assets,
@@ -7,14 +8,15 @@ import {
 } from '../../engine'
 
 import { CollisionGroup } from '../config/collisionGroups'
+import { GRAVITY, TERMINAL_VELOCITY } from '../config/constants'
 
 const D = 68
 const A = 65
-const W = 87
-const S = 83
 
 export class Player extends Entity {
   private readonly animator: WithAnimation
+
+  private readonly gravClamper
 
   constructor() {
     super({
@@ -56,55 +58,67 @@ export class Player extends Entity {
 
     this.animator = new WithAnimation(animations, 'idle')
     this.addBehavior(this.animator)
+
+    this.gravClamper = clamp(0, TERMINAL_VELOCITY)
+  }
+
+  private updateGravity(_dt: number) {
+    this._currentSpeed.y = this.gravClamper(
+      this._currentSpeed.y + GRAVITY * _dt * 0.5,
+    )
   }
 
   public update(dt: number) {
     super.update(dt)
 
-    const vel = { x: 0, y: 0 }
-    const i = gl.input
-
-    if (i.isDown(D)) vel.x += 1
-    if (i.isDown(A)) vel.x -= 1
-
-    if (i.isDown(W)) vel.y -= 1
-    if (i.isDown(S)) vel.y += 1
-
-    const speed = this.speed * (dt / 1000.0)
+    const _dt = dt / 1000.0
     const sceneColl = gl.scene.collisionHandler
 
-    this._collRect.translateFrom(this._bounds, vel.x * speed, 0)
+    //===================================================
+    // vertical collision checks
+    //===================================================
+    this.updateGravity(_dt)
+    this._collRect.translateFrom(this._bounds, 0, this._currentSpeed.y)
+
+    const collY = sceneColl.getFirstCollision(this, CollisionGroup.tile)
+    if (collY) {
+      this._pos.y = collY.pos.y - this._height
+      this._currentSpeed.y = 0
+    }
+
+    //===================================================
+    // horizontal collision checks
+    //===================================================
+    let velX = 0
+    if (gl.input.isDown(D)) velX += 1
+    if (gl.input.isDown(A)) velX -= 1
+
+    this._currentSpeed.x = velX * this._speed * _dt
+    this._collRect.translateFrom(this._bounds, this._currentSpeed.x, 0)
+
     const collX = sceneColl.getFirstCollision(this, CollisionGroup.tile)
     if (collX) {
-      if (vel.x > 0) {
+      if (this._currentSpeed.x > 0) {
         this._pos.x = collX.pos.x - this._width
-      } else if (vel.x < 0) {
+      } else if (this._currentSpeed.x < 0) {
         this._pos.x = collX.bounds.right
       }
 
-      vel.x = 0
+      this._currentSpeed.x = 0
     }
 
-    this._collRect.translateFrom(this._bounds, 0, vel.y * speed)
-    const collY = sceneColl.getFirstCollision(this, CollisionGroup.tile)
-    if (collY) {
-      if (vel.y > 0) {
-        this._pos.y = collY.pos.y - this._height
-      } else if (vel.y < 0) {
-        this._pos.y = collY.bounds.bottom
-      }
-
-      vel.y = 0
-    }
-
-    if (vel.y !== 0) {
+    //===================================================
+    // animation state updates
+    //===================================================
+    if (this._currentSpeed.y !== 0) {
       this.animator.setCurrent('fall')
-    } else if (vel.x !== 0) {
+    } else if (this._currentSpeed.x !== 0) {
       this.animator.setCurrent('run')
     } else {
       this.animator.setCurrent('idle')
     }
 
-    this.move(vel.x * speed, vel.y * speed)
+    this.move()
+    this.updateGravity(_dt)
   }
 }
