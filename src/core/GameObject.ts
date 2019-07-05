@@ -5,6 +5,7 @@ import { Rect } from '../math/Rect'
 import { Vector } from '../math/Vector'
 
 export type GameObjectConfig = {
+  collisionOffset?: Rect
   height?: number
   speed?: number
   startInvisible?: boolean
@@ -22,7 +23,8 @@ export abstract class GameObject implements Updateable {
   protected _height: number = 0
   protected _scale = new Vector(1, 1)
   protected _bounds: Rect
-  protected _collRect: Rect
+  protected _collRect: Rect = new Rect(0, 0, 0, 0)
+  protected _collOffset: Rect
   protected _pos: Vector
   protected _prevPos: Vector
   protected _visible: boolean = true
@@ -37,6 +39,7 @@ export abstract class GameObject implements Updateable {
   get scale() { return this._scale } // prettier-ignore
   get bounds() { return this._bounds } // prettier-ignore
   get collRect() { return this._collRect } // prettier-ignore
+  get collOffset() { return this._collOffset } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
   get isVisible() { return this._visible } // prettier-ignore
@@ -45,16 +48,18 @@ export abstract class GameObject implements Updateable {
   get dirty() { return this._dirty } // prettier-ignore
 
   protected constructor(config: GameObjectConfig) {
-    const { height, speed, width, x, y } = config
+    const { collisionOffset: cOff, height, speed, width, x, y } = config
 
     this._width = width || 0
     this._height = height || 0
     this._pos = new Vector(x || 0, y || 0)
     this._prevPos = new Vector(x || 0, y || 0)
     this._visible = config.startInvisible !== true
-    this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
-    this._collRect = new Rect(this.pos.x, this.pos.y, this._width, this._height)
     this._speed = speed || 0
+
+    this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
+    this._collOffset = cOff ? Rect.from(cOff) : new Rect(0, 0, 0, 0)
+    this._collRect.copyFrom(this._bounds, this._collOffset)
   }
 
   protected _updateDirtyState() {
@@ -76,7 +81,7 @@ export abstract class GameObject implements Updateable {
   ) {
     this._pos.translate(x, y)
     this._bounds.setPosition(this._pos.x, this._pos.y)
-    this._collRect.copyFrom(this._bounds)
+    this._collRect.copyFrom(this._bounds, this._collOffset)
   }
 
   public setScaleX(val: number) { this._scale.x = scaleClamper(val) } // prettier-ignore
