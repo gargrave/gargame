@@ -7,6 +7,7 @@ import { Vector } from '../math/Vector'
 export type GameObjectConfig = {
   height?: number
   speed?: number
+  startInvisible?: boolean
   width?: number
   x?: number
   y?: number
@@ -24,6 +25,7 @@ export abstract class GameObject implements Updateable {
   protected _collRect: Rect
   protected _pos: Vector
   protected _prevPos: Vector
+  protected _visible: boolean = true
 
   protected _speed = 0
   protected _dirty = true
@@ -37,6 +39,8 @@ export abstract class GameObject implements Updateable {
   get collRect() { return this._collRect } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
+  get isVisible() { return this._visible } // prettier-ignore
+  get speed() { return this._speed } // prettier-ignore
 
   get dirty() { return this._dirty } // prettier-ignore
 
@@ -47,6 +51,7 @@ export abstract class GameObject implements Updateable {
     this._height = height || 0
     this._pos = new Vector(x || 0, y || 0)
     this._prevPos = new Vector(x || 0, y || 0)
+    this._visible = config.startInvisible !== true
     this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
     this._collRect = new Rect(this.pos.x, this.pos.y, this._width, this._height)
     this._speed = speed || 0

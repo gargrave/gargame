@@ -145,7 +145,7 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     for (const eid of this._updateableEntities) {
       e = this._entityMap[eid]
       if (e) {
-        e.isActive && e.draw(ctx)
+        e.isActive && e.isVisible && e.draw(ctx)
       }
     }
   }
