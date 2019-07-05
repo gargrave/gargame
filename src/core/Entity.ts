@@ -15,10 +15,14 @@ export type EntityConfig = GameObjectConfig & {
 const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
   Primitive.Stroke.rect(ctx, DebugColors.Bounds, bounds, 1)
 
+const collRectDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
+  Primitive.Stroke.rect(ctx, DebugColors.Origin, bounds, 1)
+
 export abstract class Entity extends GameObject implements Drawable {
   private static nextId = 0
 
   private readonly drawBounds: (ctx: CanvasRenderingContext2D) => void
+  private readonly drawColl: (ctx: CanvasRenderingContext2D) => void
 
   protected readonly _id: string
   protected readonly _collisionGroups: string[]
@@ -34,6 +38,7 @@ export abstract class Entity extends GameObject implements Drawable {
     this._collisionGroups = config.collisionGroups || []
     this._active = config.startInactive !== true
     this.drawBounds = boundsDrawer(this._bounds)
+    this.drawColl = collRectDrawer(this._collRect)
   }
 
   public activate() {
@@ -71,5 +76,6 @@ export abstract class Entity extends GameObject implements Drawable {
 
   public debugDraw(ctx: CanvasRenderingContext2D) {
     this.drawBounds(ctx)
+    this.drawColl(ctx)
   }
 }
