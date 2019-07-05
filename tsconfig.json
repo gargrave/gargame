@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": false,
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noImplicitThis": false,
@@ -22,6 +22,6 @@
     "strict": true,
     "target": "esnext"
   },
-  "exclude": ["config"],
+  "exclude": ["config", "dist", "node_modules"],
   "include": ["src"]
 }

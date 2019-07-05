@@ -1,17 +1,21 @@
 {
   "name": "@gargrave/gargame",
   "version": "0.1.5",
-  "main": "dist/gargame.js",
+  "main": "dist/gargame.min.js",
+  "types": "dist/gargame.d.js",
   "author": "Gabe Hargrave <gkhargrave@gmail.com>",
   "license": "MIT",
   "repository": "https://github.com/gargrave/gargame",
   "scripts": {
-    "build": "yarn build:ts && webpack --config config/webpack.prod.js",
+    "prebuild": "yarn clean && yarn build:ts",
+    "build": "webpack --config config/webpack.prod.js",
     "build:ts": "tsc --emitDeclarationOnly",
-    "start": "yarn build:ts && webpack --config config/webpack.dev.js --watch",
+    "release": "jest && yarn build && np --yolo --no-release-draft",
+    "prestart": "yarn build:ts",
+    "start": "webpack --config config/webpack.dev.js --watch",
     "test": "jest --watch",
     "lint": "eslint --ext .ts ./src",
-    "release": "jest && yarn build && np --yolo --no-release-draft"
+    "clean": "yarn rimraf dist"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -25,9 +29,11 @@
     "@typescript-eslint/parser": "^1.10.2",
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.6",
+    "copy-webpack-plugin": "^5.0.3",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^5.0.0",
     "jest": "^24.8.0",
+    "rimraf": "^2.6.3",
     "typescript": "^3.5.2",
     "webpack": "^4.33.0",
     "webpack-cli": "^3.3.2",

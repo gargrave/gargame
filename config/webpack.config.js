@@ -1,11 +1,12 @@
 const path = require('path')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const APP_ROOT = '../'
 
 module.exports = {
   entry: './src/index.ts',
   output: {
-    filename: 'gargame.js',
+    filename: 'gargame.min.js',
     library: 'gg',
     libraryTarget: 'umd',
     path: path.resolve(__dirname, '../dist'),
@@ -31,5 +32,7 @@ module.exports = {
     ],
   },
   //
-  plugins: [],
+  plugins: [
+    new CopyWebpackPlugin(['./src/gargame.d.ts'])
+  ],
 }
