@@ -39,7 +39,7 @@ export class SceneCollisions {
 
       collTargetGroups.forEach(collGroup => {
         const collTargetIds = collChecks[collGroup]
-        if (collTargetIds.length) {
+        if (get(collTargetIds, 'length')) {
           entityIds.forEach(eid => {
             listener = this.entitiesInScene[eid]
 
