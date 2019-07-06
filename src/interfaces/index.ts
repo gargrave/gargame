@@ -1,4 +1,5 @@
 export * from './Behavior'
+export * from './Collider'
 export * from './Drawable'
 export * from './DrawableGUI'
 export * from './InputHandler'

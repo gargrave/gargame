@@ -1,4 +1,5 @@
 import { clamp, CurriedNumberFn } from '@gargrave/ggdash'
+import { RectCollider } from '../collision/RectCollider'
 import { Behavior } from '../interfaces/Behavior'
 import { Updateable } from '../interfaces/Updateable'
 import { Rect } from '../math/Rect'
@@ -23,7 +24,7 @@ export abstract class GameObject implements Updateable {
   protected _height: number = 0
   protected _scale = new Vector(1, 1)
   protected _bounds: Rect
-  protected _collRect: Rect
+  protected _collider: RectCollider
   protected _pos: Vector
   protected _prevPos: Vector
   protected _visible: boolean = true
@@ -37,7 +38,7 @@ export abstract class GameObject implements Updateable {
   get height() { return this._height } // prettier-ignore
   get scale() { return this._scale } // prettier-ignore
   get bounds() { return this._bounds } // prettier-ignore
-  get collRect() { return this._collRect } // prettier-ignore
+  get collider() { return this._collider } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
   get isVisible() { return this._visible } // prettier-ignore
@@ -56,7 +57,13 @@ export abstract class GameObject implements Updateable {
     this._speed = speed || 0
 
     this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
-    this._collRect = Rect.from(this._bounds, collisionOffset)
+    this._collider = new RectCollider(
+      this.pos.x,
+      this.pos.y,
+      this._width,
+      this._height,
+      collisionOffset,
+    )
   }
 
   protected _updateDirtyState() {
@@ -84,7 +91,7 @@ export abstract class GameObject implements Updateable {
   ) {
     this._pos.translate(x, y)
     this._bounds.setPosition(this._pos.x, this._pos.y)
-    this._collRect.copyFrom(this._bounds)
+    this._collider.copyFrom(this._bounds)
   }
 
   public setScaleX(val: number) { this._scale.x = scaleClamper(val) } // prettier-ignore

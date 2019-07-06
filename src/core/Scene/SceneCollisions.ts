@@ -40,12 +40,21 @@ export class SceneCollisions {
           entityIds.forEach(eid => {
             listener = this.entitiesInScene[eid]
 
-            if (listener && listener.isActive) {
+            // TODO: make a helper function to clean this up
+            if (
+              listener &&
+              listener.isActive &&
+              get(listener, 'collider.active')
+            ) {
               collTargetIds.forEach(tid => {
                 target = this.entitiesInScene[tid]
 
-                if (target && target.isActive) {
-                  if (listener.collRect.overlaps(target.collRect)) {
+                if (
+                  target &&
+                  target.isActive &&
+                  get(target, 'collider.active')
+                ) {
+                  if (listener.collider.overlaps(target.collider)) {
                     const collKey = makeCollisionKey(listener, target)
 
                     if (prevColl[collKey]) {
@@ -90,6 +99,10 @@ export class SceneCollisions {
    * @param targetGroup
    */
   public getFirstCollision(entity: Entity, targetGroup: string) {
+    if (!get(entity, 'collider.active')) {
+      return null
+    }
+
     const collTargetGroup = this.scene.collidableEntities[targetGroup]
     const entities = this.scene.entityMap
 
@@ -97,8 +110,8 @@ export class SceneCollisions {
     if (collTargetGroup && collTargetGroup.length) {
       for (const tid of collTargetGroup) {
         target = entities[tid]
-        if (target && target.isActive) {
-          if (entity.collRect.overlaps(target.collRect)) {
+        if (target && target.isActive && get(target, 'collider.active')) {
+          if (entity.collider.overlaps(target.collider)) {
             return target
           }
         }

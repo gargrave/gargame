@@ -18,7 +18,7 @@ describe('GameObject', () => {
     describe('Initialization', () => {
       it('correctly sets default values', () => {
         expect(go.bounds.eq(new Rect(0, 0, 0, 0))).toBe(true)
-        expect(go.collRect.eq(new Rect(0, 0, 0, 0))).toBe(true)
+        expect(go.collider.eq(new Rect(0, 0, 0, 0))).toBe(true)
         expect(go.height).toBe(0)
         expect(go.isVisible).toBe(true)
         expect(go.pos.x).toBe(0)
@@ -41,7 +41,7 @@ describe('GameObject', () => {
         go = new TestGO(config)
 
         expect(go.bounds.eq(new Rect(4, 2, 100, 200))).toBe(true)
-        expect(go.collRect.eq(new Rect(4, 2, 100, 200))).toBe(true)
+        expect(go.collider.eq(new Rect(4, 2, 100, 200))).toBe(true)
         expect(go.height).toBe(200)
         expect(go.isVisible).toBe(false)
         expect(go.pos.x).toBe(4)
@@ -62,7 +62,7 @@ describe('GameObject', () => {
           y: 74,
         }
         go = new TestGO(config)
-        expect(go.collRect.eq(new Rect(26, 76, 102, 202))).toBe(true)
+        expect(go.collider.eq(new Rect(26, 76, 102, 202))).toBe(true)
       })
     })
 
@@ -80,14 +80,14 @@ describe('GameObject', () => {
         expect(go.pos.x).toBe(30)
         expect(go.pos.y).toBe(40)
         expect(go.bounds.eq(new Rect(30, 40, 20, 10))).toBe(true)
-        expect(go.collRect.eq(new Rect(31, 41, 18, 8))).toBe(true)
+        expect(go.collider.eq(new Rect(31, 41, 18, 8))).toBe(true)
 
         go.move(2, 2)
 
         expect(go.pos.x).toBe(32)
         expect(go.pos.y).toBe(42)
         expect(go.bounds.eq(new Rect(32, 42, 20, 10))).toBe(true)
-        expect(go.collRect.eq(new Rect(33, 43, 18, 8))).toBe(true)
+        expect(go.collider.eq(new Rect(33, 43, 18, 8))).toBe(true)
       })
     })
   })

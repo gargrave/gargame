@@ -1,4 +1,5 @@
 export * from './behaviors'
+export * from './collision'
 export * from './constants'
 export * from './core'
 export * from './ggdash'

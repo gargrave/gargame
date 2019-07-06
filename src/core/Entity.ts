@@ -1,3 +1,5 @@
+import { get } from '@gargrave/ggdash'
+
 import { DebugColors } from '../constants/colors'
 import { Drawable } from '../interfaces/Drawable'
 import { Rect } from '../math/Rect'
@@ -38,7 +40,7 @@ export abstract class Entity extends GameObject implements Drawable {
     this._collisionGroups = config.collisionGroups || []
     this._active = config.startInactive !== true
     this.drawBounds = boundsDrawer(this._bounds)
-    this.drawColl = collRectDrawer(this._collRect)
+    this.drawColl = collRectDrawer(this._collider)
   }
 
   public activate() {
@@ -76,6 +78,8 @@ export abstract class Entity extends GameObject implements Drawable {
 
   public debugDraw(ctx: CanvasRenderingContext2D) {
     this.drawBounds(ctx)
-    this.drawColl(ctx)
+    if (get(this, '_collider.active')) {
+      this.drawColl(ctx)
+    }
   }
 }
