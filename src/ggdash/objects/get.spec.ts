@@ -2,6 +2,12 @@ import { get } from './get'
 
 describe('ggdash :: get', () => {
   describe('Invalid calls', () => {
+    it('returns undefined if the base object does not exist', () => {
+      const onos = undefined
+      const result = get(onos, 'this.is.the.path')
+      expect(result).toBeUndefined()
+    })
+
     it('returns undefined when a single "path" does not exist', () => {
       const result = get({}, 'whatever')
       expect(result).toBeUndefined()
@@ -47,6 +53,13 @@ describe('ggdash :: get', () => {
   })
 
   describe('Default value handling', () => {
+    it('returns the default value if the base object does not exist', () => {
+      const defaultValue = { name: 'KEWL' }
+      const onos = undefined
+      const result = get(onos, 'this.is.the.path', defaultValue)
+      expect(result).toEqual(defaultValue)
+    })
+
     it('returns the default value when "path" does not exist', () => {
       const result = get({}, 'does.not.exist', 'defaultString')
       expect(result).toBe('defaultString')

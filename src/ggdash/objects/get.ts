@@ -1,8 +1,12 @@
 export function get<T>(
-  obj: {},
+  obj: {} | undefined,
   path: string | string[],
   defaultValue?: T,
 ): T | undefined {
+  if (!obj) {
+    return defaultValue
+  }
+
   const splitPath = Array.isArray(path) ? path : path.split('.')
 
   let value
