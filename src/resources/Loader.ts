@@ -1,5 +1,6 @@
 import { Log } from '../utils/Log'
 import { Assets } from './Assets'
+import { Font } from './Font'
 import { Texture } from './Texture'
 
 type AssetList = { [key: string]: string }
@@ -20,16 +21,11 @@ export class Loader {
 
     return new Promise<boolean>(async (resolve, reject) => {
       Object.entries(fonts).forEach(([key, path]) => {
-        const font = new FontFace(key, `url(${path})`, {
-          style: 'normal',
-          // unicodeRange: 'U+000-5FF',
-          weight: '400',
-        })
-
+        const font = new Font(key, path)
         font
           .load()
           .then(() => {
-            Assets.addTexture(key, font)
+            Assets.addFont(key, font)
           })
           .catch(err => {
             Log.warn(`Error loading font resource @ "${path}" :: ${err}`)
@@ -44,6 +40,7 @@ export class Loader {
     })
   }
 
+  // TODO: these loading methods can probably be abstracted into one
   public loadTextures(textures: AssetList): Promise<boolean> {
     const expected = Object.keys(textures).length
     let loaded = 0
@@ -53,14 +50,20 @@ export class Loader {
     return new Promise<boolean>((resolve, reject) => {
       Object.entries(textures).forEach(([key, path]) => {
         const texture = new Texture(path)
-
-        texture.load().then(() => {
-          Assets.addTexture(key, texture)
-          loaded += 1
-          if (loaded === expected) {
-            resolve(true)
-          }
-        })
+        texture
+          .load()
+          .then(() => {
+            Assets.addTexture(key, texture)
+          })
+          .catch(err => {
+            Log.warn(`Error loading texture resource @ "${path}" :: ${err}`)
+          })
+          .finally(() => {
+            loaded += 1
+            if (loaded === expected) {
+              resolve(true)
+            }
+          })
       })
     })
   }

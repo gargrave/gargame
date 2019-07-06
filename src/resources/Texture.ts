@@ -24,7 +24,7 @@ export class Texture implements Loadable {
     return this._imageData
   }
 
-  public load = () => {
+  public load() {
     return new Promise<boolean>((resolve, reject) => {
       try {
         const img = new Image()

@@ -1,21 +1,32 @@
+import { Font } from './Font'
 import { Texture } from './Texture'
 
 export type AssetMap = {
+  fonts: { [key: string]: Font }
   textures: { [key: string]: Texture }
 }
 
-const _assets: AssetMap = {
+const assets: AssetMap = {
+  fonts: {},
   textures: {},
 }
 
 export class Assets {
-  static get allAssets(): AssetMap { return _assets } // prettier-ignore
+  static get allAssets(): AssetMap { return assets } // prettier-ignore
 
-  public static addTexture(key: string, t: Texture) {
-    _assets.textures[key] = t
+  public static addFont(key: string, font: Font) {
+    assets.fonts[key] = font
+  }
+
+  public static addTexture(key: string, texture: Texture) {
+    assets.textures[key] = texture
+  }
+
+  public static font(key: string): Font {
+    return assets.fonts[key]
   }
 
   public static texture(key: string): Texture {
-    return _assets.textures[key]
+    return assets.textures[key]
   }
 }

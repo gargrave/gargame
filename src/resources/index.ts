@@ -1,4 +1,5 @@
 export * from './Assets'
+export * from './Font'
 export * from './ImageData'
 export * from './Loader'
 export * from './Texture'
