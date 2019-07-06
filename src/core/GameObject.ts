@@ -23,8 +23,7 @@ export abstract class GameObject implements Updateable {
   protected _height: number = 0
   protected _scale = new Vector(1, 1)
   protected _bounds: Rect
-  protected _collRect: Rect = new Rect(0, 0, 0, 0)
-  protected _collOffset: Rect
+  protected _collRect: Rect
   protected _pos: Vector
   protected _prevPos: Vector
   protected _visible: boolean = true
@@ -39,7 +38,6 @@ export abstract class GameObject implements Updateable {
   get scale() { return this._scale } // prettier-ignore
   get bounds() { return this._bounds } // prettier-ignore
   get collRect() { return this._collRect } // prettier-ignore
-  get collOffset() { return this._collOffset } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
   get isVisible() { return this._visible } // prettier-ignore
@@ -48,7 +46,7 @@ export abstract class GameObject implements Updateable {
   get dirty() { return this._dirty } // prettier-ignore
 
   protected constructor(config: GameObjectConfig) {
-    const { collisionOffset: cOff, height, speed, width, x, y } = config
+    const { collisionOffset, height, speed, width, x, y } = config
 
     this._width = width || 0
     this._height = height || 0
@@ -58,15 +56,11 @@ export abstract class GameObject implements Updateable {
     this._speed = speed || 0
 
     this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
-    this._collOffset = cOff ? Rect.from(cOff) : new Rect(0, 0, 0, 0)
-    this._collRect.copyFrom(this._bounds, this._collOffset)
+    this._collRect = Rect.from(this._bounds, collisionOffset)
   }
 
   protected _updateDirtyState() {
-    this._dirty = false
-    if (!this.pos.eq(this.prevPos)) {
-      this._dirty = true
-    }
+    this._dirty = !this.pos.eq(this.prevPos)
   }
 
   protected _updateBehaviors(dt: number) {
@@ -75,13 +69,22 @@ export abstract class GameObject implements Updateable {
     }
   }
 
-  protected move(
+  /**
+   * Moves this instance by the amount specified as x/y. If no values are provided,
+   * the instance's current x/y speeds are used.
+   *
+   * Aside from updating position, this also includes moving any bounding boxes,
+   * colliders, etc, as appropriate.
+   * @param x
+   * @param y
+   */
+  public move(
     x: number = this._currentSpeed.x,
     y: number = this._currentSpeed.y,
   ) {
     this._pos.translate(x, y)
     this._bounds.setPosition(this._pos.x, this._pos.y)
-    this._collRect.copyFrom(this._bounds, this._collOffset)
+    this._collRect.copyFrom(this._bounds)
   }
 
   public setScaleX(val: number) { this._scale.x = scaleClamper(val) } // prettier-ignore
