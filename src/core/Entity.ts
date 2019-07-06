@@ -15,10 +15,10 @@ export type EntityConfig = GameObjectConfig & {
 }
 
 const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
-  Primitive.Stroke.rect(ctx, DebugColors.Bounds, bounds, 1)
+  Primitive.Stroke.rect(ctx, DebugColors.Bounds, bounds)
 
 const collRectDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
-  Primitive.Stroke.rect(ctx, DebugColors.Origin, bounds, 1)
+  Primitive.Stroke.rect(ctx, DebugColors.Origin, bounds)
 
 export abstract class Entity extends GameObject implements Drawable {
   private static nextId = 0
