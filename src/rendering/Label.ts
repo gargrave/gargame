@@ -1,6 +1,7 @@
 import { GuiObject } from '../core/GuiObject'
 
 export type LabelConfig = {
+  font?: string
   fontSize?: number
   x: number
   y: number
@@ -17,9 +18,10 @@ export class Label extends GuiObject {
   constructor(text: string, config: LabelConfig) {
     super()
 
-    const { fontSize = 24, x, y } = config
+    const { font = 'serif', fontSize = 24, x, y } = config
     this.config = {
       ...config,
+      font,
       fontSize,
     }
 
@@ -48,7 +50,7 @@ export class Label extends GuiObject {
     ctx.save()
 
     // set font and re-cache text measurements
-    ctx.font = `${this._height}px serif`
+    ctx.font = `${this._height}px ${this.config.font}`
     this._width = Math.ceil(ctx.measureText(this._text).width)
 
     const { x: px, y: py } = this.prevPos
