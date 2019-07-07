@@ -48,9 +48,16 @@ export const getNewCanvasContext = (
   ctxId += 1
 
   const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')! // eslint-disable-line
   canvas.id = `canvas__${id || ctxId}`
-  canvas.height = height
-  canvas.width = width
+
+  // scale the canvas/context when necessary (e.g. retina devices)
+  const ratio = window.devicePixelRatio || 1
+  canvas.width = width * ratio
+  canvas.height = height * ratio
+  canvas.style.width = `${width}px`
+  canvas.style.height = `${height}px`
+  ctx.scale(ratio, ratio)
 
   // apply all valid override styles
   Object.entries(styles).forEach(([key, value]) => {
@@ -60,5 +67,5 @@ export const getNewCanvasContext = (
   })
 
   parent.appendChild(canvas)
-  return canvas.getContext('2d')! // eslint-disable-line
+  return ctx // eslint-disable-line
 }
