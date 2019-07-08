@@ -5,7 +5,7 @@
  * @param size
  * @param start
  */
-export const range = (size: number, start: number = 0) =>
+export const range = (size: number, start: number = 0): number[] =>
   Array(size)
     .fill(null)
     .map((_, i) => i + start)

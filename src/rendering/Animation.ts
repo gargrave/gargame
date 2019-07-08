@@ -1,4 +1,4 @@
-import { CurriedNumberFn, wrap } from '@gargrave/growbag'
+import { wrap } from '@gargrave/growbag'
 
 import { Entity } from '../core/Entity'
 import { Drawable } from '../interfaces/Drawable'
@@ -17,10 +17,11 @@ export type AnimationConfig = {
 }
 
 export class Animation implements Drawable, Updateable {
+  private readonly wrapFrames: (x: number) => number
+
   private frames: Sprite[] = []
   private currentFrame: number
   private currentFrameTime: number = 0
-  private wrapFrames: CurriedNumberFn
 
   constructor(host: Entity, private config: AnimationConfig) {
     this.currentFrame = config.firstFrame
@@ -34,8 +35,6 @@ export class Animation implements Drawable, Updateable {
     const start = { x: config.width * config.firstFrame, y: 0 }
     const lastFrame = config.lastFrame || config.firstFrame
     const range = lastFrame - config.firstFrame + 1
-    this.wrapFrames = wrap(0, range - 1) as CurriedNumberFn
-
     for (let i = 0; i < range; i += 1) {
       this.frames.push(
         new Sprite(host, {
@@ -45,6 +44,8 @@ export class Animation implements Drawable, Updateable {
         }),
       )
     }
+
+    this.wrapFrames = (frame: number) => wrap(0, range - 1, frame)
   }
 
   private incrementFrame() {

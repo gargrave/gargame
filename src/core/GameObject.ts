@@ -1,4 +1,5 @@
-import { clamp, CurriedNumberFn } from '@gargrave/growbag'
+import { clamp } from '@gargrave/growbag'
+
 import { RectCollider } from '../collision/RectCollider'
 import { Behavior } from '../interfaces/Behavior'
 import { Updateable } from '../interfaces/Updateable'
@@ -15,7 +16,7 @@ export type GameObjectConfig = {
   y?: number
 }
 
-const scaleClamper = clamp(-1, 1) as CurriedNumberFn
+const clampScale = (scale: number) => clamp(-1, 1, scale)
 
 export abstract class GameObject implements Updateable {
   protected behaviors: Behavior[] = []
@@ -94,8 +95,8 @@ export abstract class GameObject implements Updateable {
     this._collider.copyFrom(this._bounds)
   }
 
-  public setScaleX(val: number) { this._scale.x = scaleClamper(val) } // prettier-ignore
-  public setScaleY(val: number) { this._scale.y = scaleClamper(val) } // prettier-ignore
+  public setScaleX(val: number) { this._scale.x = clampScale(val) } // prettier-ignore
+  public setScaleY(val: number) { this._scale.y = clampScale(val) } // prettier-ignore
 
   public addBehavior(b: Behavior) {
     this.behaviors.push(b)

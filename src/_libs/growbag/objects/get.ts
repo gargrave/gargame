@@ -3,9 +3,7 @@ export function get<T>(
   path: string | string[],
   defaultValue?: T,
 ): T | undefined {
-  if (!obj) {
-    return defaultValue
-  }
+  if (!obj) return defaultValue
 
   const splitPath = Array.isArray(path) ? path : path.split('.')
 

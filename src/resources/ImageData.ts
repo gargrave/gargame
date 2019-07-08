@@ -11,11 +11,11 @@ export type Pixel = {
 }
 
 export class ImageData {
+  private readonly pixelGetter: (x: number, y: number) => Pixel
+
   private readonly _width: number
   private readonly _height: number
   private readonly _pixels: Pixel[]
-
-  private readonly pixelGetter // curry-able "getPixelAt" function
 
   get width() { return this._width } // prettier-ignore
   get height() { return this._height } // prettier-ignore
@@ -48,7 +48,7 @@ export class ImageData {
       /* eslint-enable sort-keys */
     }
 
-    this.pixelGetter = getAtXy(this._pixels, w)
+    this.pixelGetter = (x: number, y: number) => getAtXy(this._pixels, w, x, y)
   }
 
   public getPixelAt(x: number, y: number): Pixel {

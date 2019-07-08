@@ -1,4 +1,3 @@
-import { CurriedUnaryFn } from '../growbag.types'
 import { arrayToGridString } from './arrayToGridString'
 
 describe('arrayToGridString', () => {
@@ -7,21 +6,20 @@ describe('arrayToGridString', () => {
       .fill(null)
       .map((_, i) => i)
 
-  describe('Calling directly', () => {
-    it('correctly builds a 1d array as a grid string', () => {
-      const str = arrayToGridString(arr(49), 7)
-      expect(str).toBe(`00, 01, 02, 03, 04, 05, 06
+  it('correctly builds a 1d array as a grid string', () => {
+    const str = arrayToGridString(arr(49), 7)
+    expect(str).toBe(`00, 01, 02, 03, 04, 05, 06
 07, 08, 09, 10, 11, 12, 13
 14, 15, 16, 17, 18, 19, 20
 21, 22, 23, 24, 25, 26, 27
 28, 29, 30, 31, 32, 33, 34
 35, 36, 37, 38, 39, 40, 41
 42, 43, 44, 45, 46, 47, 48`)
-    })
+  })
 
-    it('pads with longer numbers', () => {
-      const str = arrayToGridString(arr(143), 7)
-      expect(str).toBe(`000, 001, 002, 003, 004, 005, 006
+  it('pads with longer numbers', () => {
+    const str = arrayToGridString(arr(143), 7)
+    expect(str).toBe(`000, 001, 002, 003, 004, 005, 006
 007, 008, 009, 010, 011, 012, 013
 014, 015, 016, 017, 018, 019, 020
 021, 022, 023, 024, 025, 026, 027
@@ -41,23 +39,5 @@ describe('arrayToGridString', () => {
 119, 120, 121, 122, 123, 124, 125
 126, 127, 128, 129, 130, 131, 132
 133, 134, 135, 136, 137, 138, 139`)
-    })
-  })
-
-  describe('Curried', () => {
-    it('returns a curried version when last arg is missing', () => {
-      const curried = arrayToGridString(arr(20)) as CurriedUnaryFn<
-        number,
-        string
-      >
-      expect(typeof curried).toBe('function')
-      expect(curried).toHaveLength(1)
-      const str = curried(4)
-      expect(str).toBe(`00, 01, 02, 03
-04, 05, 06, 07
-08, 09, 10, 11
-12, 13, 14, 15
-16, 17, 18, 19`)
-    })
   })
 })
