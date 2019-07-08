@@ -80,7 +80,10 @@ export class SceneCollisions {
       const [entityId, targetId] = collKey.split(COLLISION_KEY_DELIMITER)
       const listener = this.entitiesInScene[entityId]
       const target = this.entitiesInScene[targetId]
-      listener.onCollisionExit(collGroup, target)
+
+      if (isCollidable(listener) && isCollidable(target)) {
+        listener.onCollisionExit(collGroup, target)
+      }
     })
 
     return newColl
