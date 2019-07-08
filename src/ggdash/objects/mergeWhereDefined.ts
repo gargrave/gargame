@@ -1,4 +1,6 @@
 export const mergeWhereDefined = (defaultValues: {}, ...overrides: {}[]) => {
+  if (!overrides.length) return defaultValues
+
   const obj = { ...defaultValues }
 
   for (const other of overrides) {
