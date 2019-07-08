@@ -30,7 +30,7 @@ export type LabelProps = RequiredProps &
   Partial<OptionalProps> &
   OptionalChildProps
 
-const DEFAULT_CONFIG: OptionalProps & RequiredChildProps = Object.freeze({
+const DEFAULT_PROPS: OptionalProps & RequiredChildProps = Object.freeze({
   color: 'white',
   font: 'serif',
   fontSize: 24,
@@ -67,10 +67,9 @@ export class Label extends GuiObject {
    * @param props
    */
   protected _mergeProps(props: LabelProps) {
-    // merge props, ensuring all entries have valid values
-    this.props = mergeWhereDefined(DEFAULT_CONFIG, props) as Props
+    this.props = mergeWhereDefined(DEFAULT_PROPS, props) as Props
     this.props.shadowText = mergeWhereDefined(
-      DEFAULT_CONFIG.shadowText,
+      DEFAULT_PROPS.shadowText,
       props.shadowText || {},
     ) as OptionalShadowTextProps
   }
@@ -118,6 +117,7 @@ export class Label extends GuiObject {
     this._width = Math.ceil(ctx.measureText(this._text).width)
 
     const { x: px, y: py } = this.prevPos
+    // TODO: this might need to be expanded to account for shadow text
     ctx.clearRect(px, py + 1, this._width, -this._height)
 
     if (shadowText.show) {
