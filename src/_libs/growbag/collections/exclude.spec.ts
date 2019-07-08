@@ -1,6 +1,6 @@
 import { exclude } from './exclude'
 
-describe('ggdash :: exclude', () => {
+describe('exclude', () => {
   it('returns a new array with the specified values excluded', () => {
     const a = [1, 2, 3, 4, 5]
     const b = [2, 4]

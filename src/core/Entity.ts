@@ -1,4 +1,4 @@
-import { get } from '@gargrave/ggdash'
+import { get } from '@gargrave/growbag'
 
 import { DebugColors } from '../constants/colors'
 import { Drawable } from '../interfaces/Drawable'

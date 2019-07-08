@@ -1,4 +1,4 @@
-import { clamp, CurriedNumberFn } from '@gargrave/ggdash'
+import { clamp, CurriedNumberFn } from '@gargrave/growbag'
 import { RectCollider } from '../collision/RectCollider'
 import { Behavior } from '../interfaces/Behavior'
 import { Updateable } from '../interfaces/Updateable'

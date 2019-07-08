@@ -1,4 +1,4 @@
-import { exclude } from '@gargrave/ggdash'
+import { exclude } from '@gargrave/growbag'
 
 import { Drawable } from '../../interfaces/Drawable'
 import { DrawableGUI } from '../../interfaces/DrawableGUI'

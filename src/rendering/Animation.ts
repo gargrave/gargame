@@ -1,4 +1,4 @@
-import { CurriedNumberFn, wrap } from '@gargrave/ggdash'
+import { CurriedNumberFn, wrap } from '@gargrave/growbag'
 
 import { Entity } from '../core/Entity'
 import { Drawable } from '../interfaces/Drawable'

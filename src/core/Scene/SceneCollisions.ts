@@ -1,4 +1,4 @@
-import { get } from '@gargrave/ggdash'
+import { get } from '@gargrave/growbag'
 
 import { Entity } from '../Entity'
 import { Globals as gl } from '../../Globals'

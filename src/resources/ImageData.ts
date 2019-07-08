@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { getAtXy } from '@gargrave/ggdash'
+import { getAtXy } from '@gargrave/growbag'
 
 import { Texture } from './Texture'
 

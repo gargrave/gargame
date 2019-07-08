@@ -1,6 +1,6 @@
 import { range } from './range'
 
-describe('ggdash :: range', () => {
+describe('range', () => {
   it('returns an array with all numbers up to `size` (exclusive)', () => {
     const arr = range(14)
     expect(arr.length).toBe(14)

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CurriedUnaryFn } from '../ggdash.types'
+import { CurriedUnaryFn } from '../growbag.types'
 
 export function arrayToGridString(
   arr: any[],

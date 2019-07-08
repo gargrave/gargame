@@ -1,7 +1,7 @@
+import { CurriedUnaryFn } from '../growbag.types'
 import { arrayToGridString } from './arrayToGridString'
-import { CurriedUnaryFn } from '@gargrave/ggdash/ggdash.types'
 
-describe('ggdash :: arrayToGridString', () => {
+describe('arrayToGridString', () => {
   const arr = size =>
     Array(size)
       .fill(null)

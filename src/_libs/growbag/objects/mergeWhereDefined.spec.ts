@@ -1,6 +1,6 @@
 import { mergeWhereDefined } from './mergeWhereDefined'
 
-describe('ggdash :: mergeWhereDefined', () => {
+describe('mergeWhereDefined', () => {
   it('returns the original object if no overrides are provided', () => {
     const orig = { name: 'Billy' }
     const result = mergeWhereDefined(orig)

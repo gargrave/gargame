@@ -15,7 +15,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts'],
     alias: {
-      '@gargrave/ggdash': path.resolve(__dirname, APP_ROOT, 'src/ggdash/'),
+      '@gargrave/growbag': path.resolve(__dirname, APP_ROOT, 'src/_libs/growbag'),
     },
   },
   //

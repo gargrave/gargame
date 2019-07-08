@@ -1,6 +1,6 @@
 import { get } from './get'
 
-describe('ggdash :: get', () => {
+describe('get', () => {
   describe('Invalid calls', () => {
     it('returns undefined if the base object does not exist', () => {
       const onos = undefined

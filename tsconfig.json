@@ -13,8 +13,7 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "paths": {
-      "@gargrave/ggdash": ["ggdash"],
-      "@gargrave/ggdash/*": ["ggdash/*"]
+      "@gargrave/growbag": ["_libs/growbag"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": false,

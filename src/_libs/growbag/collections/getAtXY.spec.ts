@@ -1,8 +1,8 @@
 import { getAtXy } from './getAtXY'
 import { range } from './range'
-import { PartiallyAppliedBinaryFn } from '../ggdash.types'
+import { PartiallyAppliedBinaryFn } from '../growbag.types'
 
-describe('ggdash :: getAtXY', () => {
+describe('getAtXY', () => {
   describe('Called directly', () => {
     describe('100 elements in grid', () => {
       const arr = range(100)

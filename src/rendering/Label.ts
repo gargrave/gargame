@@ -1,4 +1,4 @@
-import { mergeWhereDefined } from '@gargrave/ggdash'
+import { mergeWhereDefined } from '@gargrave/growbag'
 
 import { GuiObject } from '../core/GuiObject'
 

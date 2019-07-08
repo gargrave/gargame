@@ -1,4 +1,4 @@
-import { CurriedNumberFn } from '../ggdash.types'
+import { CurriedNumberFn } from '../growbag.types'
 
 export const wrap = (
   min: number,

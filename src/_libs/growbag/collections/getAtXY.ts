@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PartiallyAppliedBinaryFn } from '../ggdash.types'
+import { PartiallyAppliedBinaryFn } from '../growbag.types'
 
 /**
  * Returns the value at the specified x/y coordinates from `arr`. Note that `arr` is
