@@ -7,6 +7,7 @@ export * from './interfaces'
 export * from './math'
 export * from './rendering'
 export * from './resources'
+export * from './sound'
 export * from './utils'
 
 export * from './Globals'

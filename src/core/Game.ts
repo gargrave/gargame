@@ -1,6 +1,7 @@
 import { Input } from '../input/Input'
 import { Assets } from '../resources/Assets'
 import { Loader } from '../resources/Loader'
+import { Sound } from '../sound/Sound'
 import { getNewCanvasContext, initGameWrapper } from '../utils/domHelpers'
 import { Log } from '../utils/Log'
 import { Globals as gl } from '../Globals'
@@ -47,7 +48,9 @@ export class Game {
 
     this.config = config
     this.setupDOM()
+
     Input.init()
+    Sound.init()
 
     gl.debug = config.debug || false
     gl.game = this

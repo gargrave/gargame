@@ -1,12 +1,14 @@
 import { Log } from '../utils/Log'
 import { Assets } from './Assets'
 import { Font } from './Font'
+import { SoundFile } from './SoundFile'
 import { Texture } from './Texture'
 
 type AssetList = { [key: string]: string }
 
 export type AssetQueueMap = {
   fonts: AssetList
+  sounds: AssetList
   textures: AssetList
 }
 
@@ -29,6 +31,33 @@ export class Loader {
           })
           .catch(err => {
             Log.warn(`Error loading font resource @ "${path}" :: ${err}`)
+          })
+          .finally(() => {
+            loaded += 1
+            if (loaded === expected) {
+              resolve(true)
+            }
+          })
+      })
+    })
+  }
+
+  public loadSounds(sounds: AssetList): Promise<boolean> {
+    const expected = Object.keys(sounds).length
+    let loaded = 0
+
+    Log.info(`Loading ${expected} sounds...`)
+
+    return new Promise<boolean>(async (resolve, reject) => {
+      Object.entries(sounds).forEach(([key, path]) => {
+        const sound = new SoundFile(path)
+        sound
+          .load()
+          .then(() => {
+            Assets.addSound(key, sound)
+          })
+          .catch(err => {
+            Log.warn(`Error loading sound resource @ "${path}" :: ${err}`)
           })
           .finally(() => {
             loaded += 1
@@ -69,8 +98,12 @@ export class Loader {
   }
 
   public loadAll() {
-    const { fonts, textures } = this.assetQueue
+    const { fonts, sounds, textures } = this.assetQueue
 
-    return Promise.all([this.loadFonts(fonts), this.loadTextures(textures)])
+    return Promise.all([
+      this.loadFonts(fonts),
+      this.loadSounds(sounds),
+      this.loadTextures(textures),
+    ])
   }
 }
