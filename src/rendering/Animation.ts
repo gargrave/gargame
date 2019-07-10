@@ -1,4 +1,4 @@
-import { wrap } from '@gargrave/growbag'
+import { mergeWhereDefined, wrap } from '@gargrave/growbag'
 
 import { Entity } from '../core/Entity'
 import { Drawable } from '../interfaces/Drawable'
@@ -7,39 +7,63 @@ import { Texture } from '../resources/Texture'
 
 import { Sprite } from './Sprite'
 
-export type AnimationConfig = {
+export type AnimationCallbacks = {
+  [key: number]: () => void
+}
+
+type OptionalProps = {
+  callbacks: AnimationCallbacks
+  frameDuration: number
+  lastFrame: number
+}
+
+type RequiredProps = {
   firstFrame: number
-  frameDuration?: number
   height: number
-  lastFrame?: number
   texture: Texture
   width: number
 }
 
+type Props = OptionalProps & RequiredProps
+export type AnimationProps = RequiredProps & Partial<OptionalProps>
+
+const DEFAULT_PROPS: OptionalProps = Object.freeze({
+  callbacks: {},
+  frameDuration: 0,
+  lastFrame: 0,
+})
+
 export class Animation implements Drawable, Updateable {
   private readonly wrapFrames: (x: number) => number
 
+  private props: Props
   private frames: Sprite[] = []
   private currentFrame: number
   private currentFrameTime: number = 0
 
-  constructor(host: Entity, private config: AnimationConfig) {
-    this.currentFrame = config.firstFrame
+  constructor(private host: Entity, props: AnimationProps) {
+    this.props = mergeWhereDefined(
+      DEFAULT_PROPS,
+      { lastFrame: props.firstFrame },
+      props,
+    ) as Props
+
+    this.currentFrame = props.firstFrame
 
     const baseConfig = {
-      height: config.height,
-      texture: config.texture,
-      width: config.width,
+      height: props.height,
+      texture: props.texture,
+      width: props.width,
     }
 
-    const start = { x: config.width * config.firstFrame, y: 0 }
-    const lastFrame = config.lastFrame || config.firstFrame
-    const range = lastFrame - config.firstFrame + 1
+    const start = { x: props.width * props.firstFrame, y: 0 }
+    const lastFrame = props.lastFrame || props.firstFrame
+    const range = lastFrame - props.firstFrame + 1
     for (let i = 0; i < range; i += 1) {
       this.frames.push(
         new Sprite(host, {
           ...baseConfig,
-          x: start.x + config.width * i,
+          x: start.x + props.width * i,
           y: start.y,
         }),
       )
@@ -59,10 +83,10 @@ export class Animation implements Drawable, Updateable {
   }
 
   public update(dt: number) {
-    if (!this.config.frameDuration) return
+    if (!this.props.frameDuration) return
 
     this.currentFrameTime += dt
-    if (this.currentFrameTime >= this.config.frameDuration) {
+    if (this.currentFrameTime >= this.props.frameDuration) {
       this.incrementFrame()
     }
   }
