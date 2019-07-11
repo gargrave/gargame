@@ -1,4 +1,4 @@
-import { Game } from './core/Game'
+import { Game, GameProps } from './core/Game'
 import { Scene } from './core/Scene'
 import { Log } from './utils/Log'
 
@@ -7,6 +7,7 @@ const ENV = process.env.NODE_ENV
 let _debug = false
 let _game: Game
 let _scene: Scene
+let _settings: GameProps
 
 export class Globals {
   static get debug() { return _debug } // prettier-ignore
@@ -28,4 +29,7 @@ export class Globals {
 
   static get scene() { return _scene } // prettier-ignore
   static set scene(scene: Scene) { _scene = scene } // prettier-ignore
+
+  static get settings() { return _settings } // prettier-ignore
+  static set settings(settings: GameProps) { _settings = settings } // prettier-ignore
 }

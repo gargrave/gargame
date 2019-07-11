@@ -1,4 +1,5 @@
 import { Log } from '../utils/Log'
+import { Globals as gl } from '../Globals'
 import { Assets } from './Assets'
 import { Font } from './Font'
 import { SoundFile } from './SoundFile'
@@ -43,6 +44,10 @@ export class Loader {
   }
 
   public loadSounds(sounds: AssetList): Promise<boolean> {
+    if (!gl.settings.enableSound) {
+      return Promise.resolve(true)
+    }
+
     const expected = Object.keys(sounds).length
     let loaded = 0
 

@@ -7,28 +7,40 @@ import { Log } from '../utils/Log'
 import { Globals as gl } from '../Globals'
 
 import { Scene } from './Scene'
+import { mergeWhereDefined } from '@gargrave/growbag'
 
 const ENV = process.env.NODE_ENV
 
 export type CollisionMap = {
-  [key: string]: {
-    collidesWith?: string[]
-  }
+  [key: string]: { collidesWith?: string[] }
 }
 
-export type GameConfig = {
-  collisionGroups?: CollisionMap
-  debug?: boolean
-  height?: number
-  initialScene: string
-  scenes: {
-    [key: string]: typeof Scene
-  }
-  width?: number
+type OptionalProps = {
+  collisionGroups: CollisionMap
+  debug: boolean
+  enableSound: boolean
+  height: number
+  width: number
 }
+
+type RequiredProps = {
+  initialScene: string
+  scenes: { [key: string]: typeof Scene }
+}
+
+type Props = RequiredProps & OptionalProps
+export type GameProps = RequiredProps & Partial<OptionalProps>
+
+const DEFAULT_PROPS: OptionalProps = Object.freeze({
+  collisionGroups: {},
+  debug: false,
+  enableSound: true,
+  height: 640,
+  width: 480,
+})
 
 export class Game {
-  private config
+  private props: Props
 
   private bgCtx!: CanvasRenderingContext2D
   private mainCtx!: CanvasRenderingContext2D
@@ -41,35 +53,41 @@ export class Game {
   private running = false
   private lastUpdate = 0
 
-  get collGroups(): CollisionMap { return this.config.collisionGroups } // prettier-ignore
+  get collGroups(): CollisionMap { return this.props.collisionGroups } // prettier-ignore
 
-  constructor(config: GameConfig) {
+  constructor(props: GameProps) {
     Log.info('Initializing game...')
 
-    this.config = config
+    this.props = mergeWhereDefined(DEFAULT_PROPS, props) as Props
+    const { enableSound } = this.props
+
     this.setupDOM()
 
     Input.init()
-    Sound.init()
+    if (enableSound) {
+      Sound.init()
+    }
 
-    gl.debug = config.debug || false
+    gl.debug = props.debug || false
     gl.game = this
+    gl.settings = this.props
 
     if (ENV === 'development') {
       Log.info('Adding "gg" helper to window for development mode!')
       // eslint-disable-next-line
       ;(window as any).gg = {
         assets: Assets.allAssets,
-        debug: d => (gl.debug = d),
+        debug: d => (gl.debug = d), // toggle debug mode from console
         game: this,
+        settings: this.props,
       }
     }
   }
 
   private setupDOM() {
     const gameWrapper = initGameWrapper()
-    const w = this.config.width
-    const h = this.config.height
+    const w = this.props.width
+    const h = this.props.height
     const bgConfig = { id: 'bg', styles: { background: '#666' } }
     this.bgCtx = getNewCanvasContext(gameWrapper, w, h, bgConfig)
     this.mainCtx = getNewCanvasContext(gameWrapper, w, h, { id: 'main' })
@@ -77,7 +95,7 @@ export class Game {
   }
 
   private _instantiateSceneFromKey(key: string): Scene {
-    const map = this.config.scenes
+    const map = this.props.scenes
     if (key in map) {
       const sceneCtor = map[key]
       return new sceneCtor(this) as Scene
@@ -103,7 +121,7 @@ export class Game {
     const loader = new Loader(assets)
     try {
       await loader.loadAll()
-      this.gotoScene(this.config.initialScene)
+      this.gotoScene(this.props.initialScene)
       return true
     } catch (e) {
       return false
@@ -161,13 +179,13 @@ export class Game {
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(0, 0, this.config.width, this.config.height)
+    ctx.clearRect(0, 0, this.props.width, this.props.height)
     this.scene.draw(ctx)
   }
 
   public drawGUI(ctx: CanvasRenderingContext2D) {
     if (this.sceneHasTransitioned) {
-      ctx.clearRect(0, 0, this.config.width, this.config.height)
+      ctx.clearRect(0, 0, this.props.width, this.props.height)
     }
 
     this.scene.drawGUI(ctx)
