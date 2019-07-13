@@ -131,6 +131,9 @@ export abstract class GameObject implements Updateable {
     this.behaviors.push(b)
   }
 
+  // ============================================================
+  //  Update methods
+  // ============================================================
   public earlyUpdate(dt: number) {
     this._updateDirtyState()
   }

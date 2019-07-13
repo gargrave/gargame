@@ -1,4 +1,4 @@
-import { mergeWhereDefined } from '@gargrave/growbag'
+import { mergeWhereDefined, unique } from '@gargrave/growbag'
 
 import { Input } from '../input/Input'
 import { Assets } from '../resources/Assets'
@@ -15,10 +15,23 @@ export type CollisionMap = {
   [key: string]: { collidesWith?: string[] }
 }
 
+export type GuiLayerProps = {
+  ctx: CanvasRenderingContext2D
+  id: string
+}
+
 type OptionalProps = {
   collisionGroups: CollisionMap
   debug: boolean
   enableSound: boolean
+  /**
+   * Additional custom GUI Layers to be created in the DOM.
+   * For each string defined here, a new canvas will be created as a GUI draw target.
+   *
+   * Note that there is always a "default" GUI Layer, so if this is left blank,
+   * all GUI drawing will simply be done on the default layer.
+   */
+  guiLayers: string[]
   height: number
   width: number
 }
@@ -35,6 +48,7 @@ const DEFAULT_PROPS: OptionalProps = Object.freeze({
   collisionGroups: {},
   debug: false,
   enableSound: true,
+  guiLayers: [],
   height: 640,
   width: 480,
 })
@@ -44,7 +58,7 @@ export class Game {
 
   private bgCtx: CanvasRenderingContext2D
   private mainCtx: CanvasRenderingContext2D
-  private guiCtx: CanvasRenderingContext2D
+  private guiLayerSets: GuiLayerProps[] = []
 
   private scene: Scene
   private nextScene?: string
@@ -58,13 +72,18 @@ export class Game {
   get height() { return this.props.height } // prettier-ignore
   get widthHalf() { return this.props.width / 2 } // prettier-ignore
   get heightHalf() { return this.props.height / 2 } // prettier-ignore
+  get guiLayers() { return this.props.guiLayers } // prettier-ignore
 
   constructor(props: GameProps) {
     Log.info('Initializing game...')
 
     this.props = mergeWhereDefined(DEFAULT_PROPS, props)
-    const { enableSound } = this.props
+    // ensure GUI layers has default + unique values
+    this.props.guiLayers = unique(
+      ['default'].concat(this.props.guiLayers),
+    ) as string[]
 
+    const { enableSound } = this.props
     this.setupDOM()
 
     Input.init()
@@ -89,13 +108,31 @@ export class Game {
   }
 
   private setupDOM() {
+    const { guiLayers } = this.props
     const gameWrapper = initGameWrapper()
     const w = this.props.width
     const h = this.props.height
-    const bgConfig = { id: 'bg', styles: { background: '#666' } }
+
+    // setup the default canvas configuration
+    const bgConfig = { id: 'bg__default', styles: { background: '#666' } }
     this.bgCtx = getNewCanvasContext(gameWrapper, w, h, bgConfig)
-    this.mainCtx = getNewCanvasContext(gameWrapper, w, h, { id: 'main' })
-    this.guiCtx = getNewCanvasContext(gameWrapper, w, h, { id: 'gui' })
+    this.mainCtx = getNewCanvasContext(gameWrapper, w, h, {
+      id: 'game__default',
+    })
+
+    // initialize default + custom GUI contexts/layers
+    this.guiLayerSets.push({
+      ctx: getNewCanvasContext(gameWrapper, w, h, { id: 'gui__default' }),
+      id: 'default',
+    })
+    for (const guiLayerName of guiLayers) {
+      this.guiLayerSets.push({
+        ctx: getNewCanvasContext(gameWrapper, w, h, {
+          id: `gui__${guiLayerName}`,
+        }),
+        id: guiLayerName,
+      })
+    }
   }
 
   private _instantiateSceneFromKey(key: string): Scene {
@@ -140,7 +177,7 @@ export class Game {
     this.earlyUpdate(dt)
     this.update(dt)
     this.draw(this.mainCtx)
-    this.drawGUI(this.guiCtx)
+    this.drawGuiLayers()
     this.lateUpdate(dt)
 
     if (this.running) {
@@ -165,6 +202,9 @@ export class Game {
     this.nextScene = scene
   }
 
+  // ============================================================
+  //  Update methods
+  // ============================================================
   public earlyUpdate(dt: number) {
     Input.earlyUpdate(dt)
     this._handlePendingSceneTransition()
@@ -182,16 +222,21 @@ export class Game {
     this.sceneHasTransitioned = false
   }
 
+  // ============================================================
+  //  Draw methods
+  // ============================================================
   public draw(ctx: CanvasRenderingContext2D) {
     ctx.clearRect(0, 0, this.props.width, this.props.height)
+    // TODO: move Entity drawing to a layers system, similar to GUI layers
     this.scene.draw(ctx)
   }
 
-  public drawGUI(ctx: CanvasRenderingContext2D) {
-    if (this.sceneHasTransitioned) {
-      ctx.clearRect(0, 0, this.props.width, this.props.height)
+  public drawGuiLayers() {
+    for (const { ctx, id } of this.guiLayerSets) {
+      if (this.sceneHasTransitioned) {
+        ctx.clearRect(0, 0, this.props.width, this.props.height)
+      }
+      this.scene.drawGuiLayer(id, ctx)
     }
-
-    this.scene.drawGUI(ctx)
   }
 }

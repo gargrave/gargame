@@ -17,6 +17,14 @@ export abstract class GuiObject extends GameObject implements DrawableGUI {
     return !!go && get(go, updateFn)
   }
 
+  /**
+   * Returns whether the provided GuiObject is in a state that can be drawn.
+   * @param go
+   */
+  public static canDraw(go: GuiObject) {
+    return !!go && get(go, 'isActive') && get(go, 'isVisible')
+  }
+
   protected constructor(config: GameObjectConfig = {}) {
     super(config)
   }

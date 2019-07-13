@@ -1,7 +1,6 @@
-import { exclude } from '@gargrave/growbag'
+import { exclude, get } from '@gargrave/growbag'
 
 import { Drawable } from '../../interfaces/Drawable'
-import { DrawableGUI } from '../../interfaces/DrawableGUI'
 import { Updateable } from '../../interfaces/Updateable'
 import { Log } from '../../utils/Log'
 import { Globals as gl } from '../../Globals'
@@ -12,9 +11,9 @@ import { SceneCollisions } from './SceneCollisions'
 
 export const DESTROY_QUEUE_INTERVAL = 1000
 
-export class Scene implements Drawable, DrawableGUI, Updateable {
+export class Scene implements Drawable, Updateable {
   private lastDestroyProcess = 0
-  private activeGuiSet: GuiObject | null
+  private guiLayers: { [key: string]: GuiObject[] } = {}
 
   protected _entityMap: { [key: string]: Entity } = {}
   protected _updateableEntities: string[] = []
@@ -37,6 +36,9 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     this.game = game
     this._currentCollisions = {}
     this._collisionHandler = new SceneCollisions(this)
+
+    // initialize all expected GUI layers
+    game.guiLayers.forEach(layer => (this.guiLayers[layer] = []))
   }
 
   private _processDestroyQueue() {
@@ -99,20 +101,12 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     this._destroyQueue.push(entity.id)
   }
 
-  public setActiveGuiSet(guiSet: GuiObject) {
-    if (this.activeGuiSet) {
-      this.clearActiveGuiSet()
-    }
+  public addGuiObject(go: GuiObject, layer: string = 'default') {
+    const guiLayer = get<GuiObject[]>(this.guiLayers, layer)
+    if (!guiLayer) return
 
-    this.activeGuiSet = guiSet
-    this.activeGuiSet.show()
-  }
-
-  public clearActiveGuiSet() {
-    if (!this.activeGuiSet) return
-
-    this.activeGuiSet.hide()
-    this.activeGuiSet = null
+    // TODO: ensure go is not already in this layer
+    guiLayer.push(go)
   }
 
   // ============================================================
@@ -128,9 +122,14 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
       }
     }
 
-    if (this.activeGuiSet && GuiObject.canUpdate(this.activeGuiSet, updateFn)) {
-      this.activeGuiSet[updateFn](dt)
-    }
+    // update all active GUI Objects in all layers
+    Object.values(this.guiLayers).forEach(guiLayer => {
+      for (const go of guiLayer) {
+        if (GuiObject.canUpdate(go, updateFn)) {
+          go[updateFn](dt)
+        }
+      }
+    })
   }
 
   public earlyUpdate(dt: number) {
@@ -160,20 +159,24 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     let e: Entity
     for (const eid of this._updateableEntities) {
       e = this._entityMap[eid]
-      // TODO: being inactive should not prevent an Entity from being drawn
       if (e) {
         e.isActive && e.isVisible && e.draw(ctx)
       }
     }
   }
 
-  public drawGUI(ctx: CanvasRenderingContext2D, forceDraw: boolean = false) {
+  public drawGuiLayer(layerName: string, ctx: CanvasRenderingContext2D) {
+    const guiObjects = get<GuiObject[]>(this.guiLayers, layerName)
+    if (!guiObjects) return
+
     if (this.stateHasTransitioned) {
       ctx.clearRect(0, 0, gl.game.width, gl.game.height)
     }
 
-    if (this.activeGuiSet) {
-      this.activeGuiSet.drawGUI(ctx)
+    for (const go of guiObjects) {
+      if (GuiObject.canDraw(go)) {
+        go.drawGUI(ctx)
+      }
     }
   }
 }
