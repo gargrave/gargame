@@ -34,11 +34,6 @@
     "no-restricted-syntax": ["warn", "ForInStatement"],
     "no-unused-vars": 0,
     "prefer-const": "warn",
-    "padding-line-between-statements": [
-      "warn",
-      { "blankLine": "always", "prev": "block-like", "next": "*" },
-      { "blankLine": "always", "prev": "multiline-expression", "next": "*" }
-    ],
     "semi": ["warn", "never"],
     "sort-keys": "warn",
 
