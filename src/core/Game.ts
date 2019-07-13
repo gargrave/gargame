@@ -1,3 +1,5 @@
+import { mergeWhereDefined } from '@gargrave/growbag'
+
 import { Input } from '../input/Input'
 import { Assets } from '../resources/Assets'
 import { Loader } from '../resources/Loader'
@@ -5,9 +7,7 @@ import { Sound } from '../sound/Sound'
 import { getNewCanvasContext, initGameWrapper } from '../utils/domHelpers'
 import { Log } from '../utils/Log'
 import { Globals as gl } from '../Globals'
-
 import { Scene } from './Scene'
-import { mergeWhereDefined } from '@gargrave/growbag'
 
 const ENV = process.env.NODE_ENV
 
@@ -42,11 +42,11 @@ const DEFAULT_PROPS: OptionalProps = Object.freeze({
 export class Game {
   private props: Props
 
-  private bgCtx!: CanvasRenderingContext2D
-  private mainCtx!: CanvasRenderingContext2D
-  private guiCtx!: CanvasRenderingContext2D
+  private bgCtx: CanvasRenderingContext2D
+  private mainCtx: CanvasRenderingContext2D
+  private guiCtx: CanvasRenderingContext2D
 
-  private scene!: Scene
+  private scene: Scene
   private nextScene?: string
   private sceneHasTransitioned = false
 
@@ -54,11 +54,15 @@ export class Game {
   private lastUpdate = 0
 
   get collGroups(): CollisionMap { return this.props.collisionGroups } // prettier-ignore
+  get width() { return this.props.width } // prettier-ignore
+  get height() { return this.props.height } // prettier-ignore
+  get widthHalf() { return this.props.width / 2 } // prettier-ignore
+  get heightHalf() { return this.props.height / 2 } // prettier-ignore
 
   constructor(props: GameProps) {
     Log.info('Initializing game...')
 
-    this.props = mergeWhereDefined(DEFAULT_PROPS, props) as Props
+    this.props = mergeWhereDefined(DEFAULT_PROPS, props)
     const { enableSound } = this.props
 
     this.setupDOM()

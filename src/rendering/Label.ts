@@ -1,6 +1,7 @@
 import { mergeWhereDefined } from '@gargrave/growbag'
 
 import { GuiObject } from '../core/GuiObject'
+import { LabelHelpers } from './LabelHelpers'
 
 type OptionalShadowTextProps = {
   color: string
@@ -10,6 +11,11 @@ type OptionalShadowTextProps = {
 }
 
 type OptionalProps = {
+  /**
+   * Whether this instance should be centered horizontally on the screen.
+   * Note that using this setting will override any "x" value.
+   */
+  centeredX: boolean
   color: string
   font: string
   fontSize: number
@@ -31,6 +37,7 @@ export type LabelProps = RequiredProps &
   OptionalChildProps
 
 const DEFAULT_PROPS: OptionalProps & RequiredChildProps = Object.freeze({
+  centeredX: false,
   color: 'white',
   font: 'serif',
   fontSize: 24,
@@ -43,7 +50,7 @@ const DEFAULT_PROPS: OptionalProps & RequiredChildProps = Object.freeze({
 })
 
 export class Label extends GuiObject {
-  private props!: Props
+  private readonly _props: Props
 
   /**
    * Whether the text has updated since last frame.
@@ -55,32 +62,20 @@ export class Label extends GuiObject {
   private _text: string = ''
 
   get text() { return this._text } // prettier-ignore
+  get props() { return this._props } // prettier-ignore
 
   constructor(text: string, props: LabelProps) {
     super()
-    this._mergeProps(props)
-    this._init(text)
-  }
 
-  /**
-   * Merges incoming props/config with default values, ensuring all entries have a valid value
-   * @param props
-   */
-  protected _mergeProps(props: LabelProps) {
-    this.props = mergeWhereDefined(DEFAULT_PROPS, props) as Props
-    this.props.shadowText = mergeWhereDefined(
+    // merge props + default props
+    this._props = mergeWhereDefined(DEFAULT_PROPS, props)
+    this._props.shadowText = mergeWhereDefined(
       DEFAULT_PROPS.shadowText,
       props.shadowText || {},
-    ) as OptionalShadowTextProps
-  }
+    )
 
-  /**
-   * Initializes the Label with incoming props.
-   * @param text
-   */
-  protected _init(text: string) {
-    const { fontSize, x, y } = this.props
-
+    // initialize the instance
+    const { fontSize, x, y } = this._props
     this.setText(text)
     this._pos.setTo(x, y)
     this._height = fontSize
@@ -102,37 +97,39 @@ export class Label extends GuiObject {
    */
   public setText(newText: string) {
     if (newText === this._text) return
+
     this._text = newText
     this.textHasUpdated = true
   }
 
-  public drawGUI(ctx: CanvasRenderingContext2D) {
-    if (!this.dirty) return
+  public drawGUI(ctx: CanvasRenderingContext2D, forceDraw: boolean = false) {
+    if (!this._dirty && !forceDraw) return
 
-    const { color, font, fontSize, shadowText } = this.props
+    const { color, font, fontSize, shadowText } = this._props
+
     ctx.save()
 
     // set font and re-cache text measurements
     ctx.font = `${fontSize}px ${font}`
     this._width = Math.ceil(ctx.measureText(this._text).width)
 
-    const { x: px, y: py } = this.prevPos
-    // TODO: this might need to be expanded to account for shadow text
-    ctx.clearRect(px, py + 1, this._width, -this._height)
+    const labelX = LabelHelpers.getDrawX(this)
+    const labelY = this.pos.y
 
     if (shadowText.show) {
       ctx.fillStyle = shadowText.color
       ctx.fillText(
         this.text,
-        this.pos.x + shadowText.offsetX,
-        this.pos.y + shadowText.offsetY,
+        labelX + shadowText.offsetX,
+        labelY + shadowText.offsetY,
       )
     }
 
     ctx.fillStyle = color
-    ctx.fillText(this.text, this.pos.x, this.pos.y)
+    ctx.fillText(this.text, labelX, labelY)
 
     ctx.restore()
     this.textHasUpdated = false
+    this._dirty = false
   }
 }

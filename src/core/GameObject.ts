@@ -29,9 +29,9 @@ export abstract class GameObject implements Updateable {
   protected _pos: Vector
   protected _prevPos: Vector
   protected _visible: boolean = true
-
   protected _speed = 0
   protected _dirty = true
+  protected _forcedDirtyState = false
 
   protected _currentSpeed = new Vector(0, 0)
 
@@ -44,7 +44,6 @@ export abstract class GameObject implements Updateable {
   get prevPos() { return this._prevPos} // prettier-ignore
   get isVisible() { return this._visible } // prettier-ignore
   get speed() { return this._speed } // prettier-ignore
-
   get dirty() { return this._dirty } // prettier-ignore
 
   protected constructor(config: GameObjectConfig) {
@@ -68,13 +67,26 @@ export abstract class GameObject implements Updateable {
   }
 
   protected _updateDirtyState() {
-    this._dirty = !this.pos.eq(this.prevPos)
+    let newDirtyState = false
+
+    if (this._forcedDirtyState) {
+      newDirtyState = true
+      this._forcedDirtyState = false
+    } else if (!this.pos.eq(this.prevPos)) {
+      newDirtyState = true
+    }
+
+    this._dirty = newDirtyState
   }
 
   protected _updateBehaviors(dt: number) {
     for (const b of this.behaviors) {
       b.update(dt)
     }
+  }
+
+  public forceDirtyState() {
+    this._forcedDirtyState = true
   }
 
   /**

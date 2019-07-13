@@ -1,4 +1,5 @@
 export * from './Animation'
 export * from './Label'
+export * from './LabelHelpers'
 export * from './Primitive'
 export * from './Sprite'

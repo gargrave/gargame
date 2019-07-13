@@ -21,6 +21,17 @@ const collRectDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
   Primitive.Stroke.rect(ctx, DebugColors.Origin, bounds)
 
 export abstract class Entity extends GameObject implements Drawable {
+  /**
+   * Returns whether the provided Entity can update based on the provided update
+   * function name. Note that this is safe, in that if anything is null/undefined
+   * (even the Entity instance itself), it will simply return false.
+   * @param e
+   * @param updateFn
+   */
+  public static canUpdate(e: Entity, updateFn: string) {
+    return !!e && get(e, 'isActive') && get(e, updateFn)
+  }
+
   private static nextId = 0
 
   private readonly drawBounds: (ctx: CanvasRenderingContext2D) => void

@@ -47,7 +47,7 @@ export class Animation implements Drawable, Updateable {
       DEFAULT_PROPS,
       { lastFrame: props.firstFrame },
       props,
-    ) as Props
+    )
 
     this.currentFrame = props.firstFrame
 

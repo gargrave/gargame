@@ -14,6 +14,7 @@ export const DESTROY_QUEUE_INTERVAL = 1000
 
 export class Scene implements Drawable, DrawableGUI, Updateable {
   private lastDestroyProcess = 0
+  private activeGuiSet: GuiObject | null
 
   protected _entityMap: { [key: string]: Entity } = {}
   protected _updateableEntities: string[] = []
@@ -22,9 +23,8 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
   protected _currentCollisions: { [key: string]: string }
   protected _collisionHandler: SceneCollisions
 
-  protected guiObjects: GuiObject[] = []
-
   protected game: Game
+  protected stateHasTransitioned = false
 
   get entityMap() { return this._entityMap } // prettier-ignore
   get updateableEntities() { return this._updateableEntities } // prettier-ignore
@@ -70,7 +70,6 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     this._entityMap = {}
     this._updateableEntities = []
     this._currentCollisions = {}
-    this.guiObjects = []
   }
 
   public add(entity: Entity) {
@@ -87,72 +86,94 @@ export class Scene implements Drawable, DrawableGUI, Updateable {
     })
   }
 
+  public clear() {
+    this._entityMap = {}
+    this._updateableEntities = []
+    this._collidableEntities = {}
+    this._currentCollisions = {}
+    // HACK: this is a temp fix to deal with collision problems
+    this._collisionHandler = new SceneCollisions(this)
+  }
+
   public addToDestroyQueue(entity: Entity) {
     this._destroyQueue.push(entity.id)
   }
 
-  public addGuiObject(g: GuiObject) {
-    this.guiObjects.push(g)
+  public setActiveGuiSet(guiSet: GuiObject) {
+    if (this.activeGuiSet) {
+      this.clearActiveGuiSet()
+    }
+
+    this.activeGuiSet = guiSet
+    this.activeGuiSet.show()
+  }
+
+  public clearActiveGuiSet() {
+    if (!this.activeGuiSet) return
+
+    this.activeGuiSet.hide()
+    this.activeGuiSet = null
+  }
+
+  // ============================================================
+  //  Update methods
+  // ============================================================
+  private _baseUpdate(dt: number, updateFn: string) {
+    // update all current/active Entities
+    let e: Entity
+    for (const eid of this._updateableEntities) {
+      e = this._entityMap[eid]
+      if (Entity.canUpdate(e, updateFn)) {
+        e[updateFn](dt)
+      }
+    }
+
+    if (this.activeGuiSet && GuiObject.canUpdate(this.activeGuiSet, updateFn)) {
+      this.activeGuiSet[updateFn](dt)
+    }
   }
 
   public earlyUpdate(dt: number) {
-    let e: Entity
-    for (const eid of this._updateableEntities) {
-      e = this._entityMap[eid]
-      if (e) {
-        e.isActive && e.earlyUpdate && e.earlyUpdate(dt)
-      }
-    }
-
-    for (const g of this.guiObjects) {
-      g.earlyUpdate && g.earlyUpdate(dt)
-    }
+    this._baseUpdate(dt, 'earlyUpdate')
   }
 
   public update(dt: number) {
-    let e: Entity
-    for (const eid of this._updateableEntities) {
-      e = this._entityMap[eid]
-      if (e) {
-        e.isActive && e.update(dt)
-      }
-    }
-
-    for (const g of this.guiObjects) g.update(dt)
-
+    this._baseUpdate(dt, 'update')
     this._currentCollisions = this.collisionHandler.updateAutoCollisions()
   }
 
   public lateUpdate(dt: number) {
-    let e: Entity
-    for (const eid of this._updateableEntities) {
-      e = this._entityMap[eid]
-      if (e) {
-        e.isActive && e.lateUpdate && e.lateUpdate(dt)
-      }
-    }
-
-    for (const g of this.guiObjects) g.lateUpdate && g.lateUpdate(dt)
+    this._baseUpdate(dt, 'lateUpdate')
 
     this.lastDestroyProcess += dt
     if (this.lastDestroyProcess >= DESTROY_QUEUE_INTERVAL) {
       this._processDestroyQueue()
     }
+
+    this.stateHasTransitioned = false
   }
 
+  // ============================================================
+  //  Draw methods
+  // ============================================================
   public draw(ctx: CanvasRenderingContext2D) {
     let e: Entity
     for (const eid of this._updateableEntities) {
       e = this._entityMap[eid]
+      // TODO: being inactive should not prevent an Entity from being drawn
       if (e) {
         e.isActive && e.isVisible && e.draw(ctx)
       }
     }
   }
 
-  public drawGUI(ctx: CanvasRenderingContext2D) {
-    for (const g of this.guiObjects) {
-      g.drawGUI(ctx)
+  public drawGUI(ctx: CanvasRenderingContext2D, forceDraw: boolean = false) {
+    if (this.stateHasTransitioned) {
+      ctx.clearRect(0, 0, gl.game.width, gl.game.height)
+    }
+
+    if (this.activeGuiSet) {
+      this.activeGuiSet.drawGUI(ctx)
     }
   }
 }

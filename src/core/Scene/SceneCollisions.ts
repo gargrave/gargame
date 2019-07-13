@@ -18,6 +18,9 @@ export class SceneCollisions {
   private readonly collidableEntitiesInScene: { [key: string]: string[] } = {}
 
   constructor(private scene: Scene) {
+    // FIXME: referential integrity is breaking collision checks after clearing (i.e. new objects)
+    //   maybe: don't set them to new objects
+    //   maybe: give the new objects to SceneCollisions on clear/reset
     this.entitiesInScene = scene.entityMap
     this.collidableEntitiesInScene = scene.collidableEntities
   }
