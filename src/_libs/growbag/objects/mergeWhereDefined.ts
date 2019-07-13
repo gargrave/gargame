@@ -1,6 +1,5 @@
-// TODO: change this to take a generic type, and cast return value to said type
-export const mergeWhereDefined = (defaultValues: {}, ...overrides: {}[]) => {
-  if (!overrides.length) return defaultValues
+export function mergeWhereDefined<T>(defaultValues: {}, ...overrides: {}[]): T {
+  if (!overrides.length) return defaultValues as T
 
   const obj = { ...defaultValues }
 
@@ -12,5 +11,5 @@ export const mergeWhereDefined = (defaultValues: {}, ...overrides: {}[]) => {
     })
   }
 
-  return obj
+  return obj as T
 }

@@ -45,7 +45,7 @@ describe('mergeWhereDefined', () => {
       occupation: 'Plumber',
       timesScared: 0,
     }
-    const result = mergeWhereDefined(orig, other)
+    const result = mergeWhereDefined<{}>(orig, other)
 
     expect(result).not.toBe(orig)
     expect('homeTown' in result).toBe(false)
