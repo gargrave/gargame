@@ -10,6 +10,7 @@ export type GameObjectConfig = {
   collisionOffset?: Rect
   height?: number
   speed?: number
+  startInactive?: boolean
   startInvisible?: boolean
   width?: number
   x?: number
@@ -28,6 +29,7 @@ export abstract class GameObject implements Updateable {
   protected _collider: RectCollider
   protected _pos: Vector
   protected _prevPos: Vector
+  protected _active: boolean
   protected _visible: boolean = true
   protected _speed = 0
   protected _dirty = true
@@ -42,6 +44,7 @@ export abstract class GameObject implements Updateable {
   get collider() { return this._collider } // prettier-ignore
   get pos() { return this._pos } // prettier-ignore
   get prevPos() { return this._prevPos} // prettier-ignore
+  get isActive() { return this._active } // prettier-ignore
   get isVisible() { return this._visible } // prettier-ignore
   get speed() { return this._speed } // prettier-ignore
   get dirty() { return this._dirty } // prettier-ignore
@@ -53,6 +56,7 @@ export abstract class GameObject implements Updateable {
     this._height = height || 0
     this._pos = new Vector(x || 0, y || 0)
     this._prevPos = new Vector(x || 0, y || 0)
+    this._active = config.startInactive !== true
     this._visible = config.startInvisible !== true
     this._speed = speed || 0
 
@@ -83,6 +87,14 @@ export abstract class GameObject implements Updateable {
     for (const b of this.behaviors) {
       b.update(dt)
     }
+  }
+
+  public activate() {
+    this._active = true
+  }
+
+  public deactivate() {
+    this._active = false
   }
 
   public forceDirtyState() {
