@@ -31,20 +31,15 @@ export abstract class Entity extends GameObject implements Drawable {
     return !!e && get(e, 'isActive') && get(e, updateFn)
   }
 
-  private static nextId = 0
-
   private readonly drawBounds: (ctx: CanvasRenderingContext2D) => void
   private readonly drawColl: (ctx: CanvasRenderingContext2D) => void
 
-  protected readonly _id: string
   protected readonly _collisionGroups: string[]
 
-  get id() { return this._id } // prettier-ignore
   get collisionGroups() { return this._collisionGroups } // prettier-ignore
 
   protected constructor(config: EntityConfig) {
     super(config)
-    this._id = `${this.constructor.name}__${Entity.nextId++}` // eslint-disable-line
     this._collisionGroups = config.collisionGroups || []
     this.drawBounds = boundsDrawer(this._bounds)
     this.drawColl = collRectDrawer(this._collider)

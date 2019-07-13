@@ -20,6 +20,9 @@ export type GameObjectConfig = {
 const clampScale = (scale: number) => clamp(-1, 1, scale)
 
 export abstract class GameObject implements Updateable {
+  private static nextId = 0
+
+  protected readonly _id: string
   protected behaviors: Behavior[] = []
 
   protected _width: number = 0
@@ -37,6 +40,7 @@ export abstract class GameObject implements Updateable {
 
   protected _currentSpeed = new Vector(0, 0)
 
+  get id() { return this._id } // prettier-ignore
   get width() { return this._width } // prettier-ignore
   get height() { return this._height } // prettier-ignore
   get scale() { return this._scale } // prettier-ignore
@@ -52,6 +56,7 @@ export abstract class GameObject implements Updateable {
   protected constructor(config: GameObjectConfig) {
     const { collisionOffset, height, speed, width, x, y } = config
 
+    this._id = `${this.constructor.name}__${GameObject.nextId++}` // eslint-disable-line
     this._width = width || 0
     this._height = height || 0
     this._pos = new Vector(x || 0, y || 0)
