@@ -1,8 +1,8 @@
-import { Entity, EntityConfig } from './Entity'
+import { Entity, EntityProps } from './Entity'
 
 class TestEntity extends Entity {
-  constructor(config: EntityConfig) {
-    super(config)
+  constructor(props: EntityProps) {
+    super(props)
   }
 }
 
@@ -26,7 +26,7 @@ describe('Entity', () => {
       expect(e.isActive).toBe(true)
     })
 
-    it('initializes inactive when specified in the config', () => {
+    it('initializes inactive when specified in the props', () => {
       e = new TestEntity({ startInactive: true })
       expect(e.isActive).toBe(false)
     })

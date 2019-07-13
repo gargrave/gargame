@@ -1,4 +1,4 @@
-import { get } from '@gargrave/growbag'
+import { get, mergeWhereDefined } from '@gargrave/growbag'
 
 import { DebugColors } from '../constants/colors'
 import { Drawable } from '../interfaces/Drawable'
@@ -7,11 +7,7 @@ import { Primitive } from '../rendering/Primitive'
 import { Log } from '../utils/Log'
 import { Globals as gl } from '../Globals'
 
-import { GameObject, GameObjectConfig } from './GameObject'
-
-export type EntityConfig = GameObjectConfig & {
-  collisionGroups?: string[]
-}
+import { GameObject, GameObjectProps } from './GameObject'
 
 const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
   Primitive.Stroke.rect(ctx, DebugColors.Bounds, bounds)
@@ -19,28 +15,33 @@ const boundsDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
 const collRectDrawer = (bounds: Rect) => (ctx: CanvasRenderingContext2D) =>
   Primitive.Stroke.rect(ctx, DebugColors.Origin, bounds)
 
-export abstract class Entity extends GameObject implements Drawable {
-  /**
-   * Returns whether the provided Entity can update based on the provided update
-   * function name. Note that this is safe, in that if anything is null/undefined
-   * (even the Entity instance itself), it will simply return false.
-   * @param e
-   * @param updateFn
-   */
-  public static canUpdate(e: Entity, updateFn: string) {
-    return !!e && get(e, 'isActive') && get(e, updateFn)
-  }
+export type RequiredProps = {}
 
+export type OptionalProps = {
+  collisionGroups: string[]
+}
+
+type Props = GameObjectProps & RequiredProps & OptionalProps
+export type EntityProps = GameObjectProps &
+  RequiredProps &
+  Partial<OptionalProps>
+
+const DEFAULT_PROPS: OptionalProps = Object.freeze({
+  collisionGroups: [],
+})
+
+export abstract class Entity extends GameObject<Props> implements Drawable {
   private readonly drawBounds: (ctx: CanvasRenderingContext2D) => void
   private readonly drawColl: (ctx: CanvasRenderingContext2D) => void
 
-  protected readonly _collisionGroups: string[]
+  get collisionGroups() { return this._props.collisionGroups } // prettier-ignore
 
-  get collisionGroups() { return this._collisionGroups } // prettier-ignore
+  protected constructor(props: EntityProps) {
+    super(props)
 
-  protected constructor(config: EntityConfig) {
-    super(config)
-    this._collisionGroups = config.collisionGroups || []
+    const myProps = mergeWhereDefined<Props>(DEFAULT_PROPS, props)
+    this._props = mergeWhereDefined(this._props, myProps)
+
     this.drawBounds = boundsDrawer(this._bounds)
     this.drawColl = collRectDrawer(this._collider)
   }
@@ -51,6 +52,9 @@ export abstract class Entity extends GameObject implements Drawable {
     }
   }
 
+  // ============================================================
+  //  Collision handling
+  // ============================================================
   public onCollisionEnter(group: string, other: Entity) {
     Log.warn(`onCollisionEnter not implemented for: ${this.constructor.name}`)
   }
@@ -63,6 +67,9 @@ export abstract class Entity extends GameObject implements Drawable {
     Log.warn(`onCollisionExit not implemented for: ${this.constructor.name}`)
   }
 
+  // ============================================================
+  //  Draw methods
+  // ============================================================
   public draw(ctx: CanvasRenderingContext2D) {
     this._drawBehaviors(ctx)
     if (gl.debug) {

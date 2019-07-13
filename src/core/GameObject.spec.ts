@@ -1,15 +1,15 @@
 import { Rect } from '../math/Rect'
-import { GameObject, GameObjectConfig } from './GameObject'
+import { GameObject, GameObjectProps } from './GameObject'
 
-class TestGO extends GameObject {
-  constructor(config: GameObjectConfig) {
-    super(config)
+class TestGO<T> extends GameObject<T> {
+  constructor(props: GameObjectProps) {
+    super(props)
   }
 }
 
 describe('GameObject', () => {
   describe('instance properties', () => {
-    let go: GameObject
+    let go: GameObject<{}>
 
     beforeEach(() => {
       go = new TestGO({})
@@ -29,8 +29,8 @@ describe('GameObject', () => {
         expect(go.width).toBe(0)
       })
 
-      it('correctly overrides default values based on config', () => {
-        const config: GameObjectConfig = {
+      it('correctly overrides default values based on props', () => {
+        const props: GameObjectProps = {
           height: 200,
           speed: 33,
           startInvisible: true,
@@ -38,7 +38,7 @@ describe('GameObject', () => {
           x: 4,
           y: 2,
         }
-        go = new TestGO(config)
+        go = new TestGO(props)
 
         expect(go.bounds.eq(new Rect(4, 2, 100, 200))).toBe(true)
         expect(go.collider.eq(new Rect(4, 2, 100, 200))).toBe(true)
@@ -53,7 +53,7 @@ describe('GameObject', () => {
       })
 
       it('correctly overrides the collision offset rect', () => {
-        const config: GameObjectConfig = {
+        const props: GameObjectProps = {
           collisionOffset: new Rect(1, 2, 3, 4),
           height: 200,
           speed: 33,
@@ -61,21 +61,21 @@ describe('GameObject', () => {
           x: 25,
           y: 74,
         }
-        go = new TestGO(config)
+        go = new TestGO(props)
         expect(go.collider.eq(new Rect(26, 76, 102, 202))).toBe(true)
       })
     })
 
     describe('move', () => {
       it('updates the position and any associated properties', () => {
-        const config: GameObjectConfig = {
+        const props: GameObjectProps = {
           collisionOffset: new Rect(1, 1, -1, -1),
           height: 10,
           width: 20,
           x: 30,
           y: 40,
         }
-        go = new TestGO(config)
+        go = new TestGO(props)
 
         expect(go.pos.x).toBe(30)
         expect(go.pos.y).toBe(40)

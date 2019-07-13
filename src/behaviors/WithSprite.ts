@@ -7,7 +7,7 @@ export class WithSprite extends BaseBehavior {
 
   set sprite(sprite: Sprite) { this._sprite = sprite } // prettier-ignore
 
-  constructor(host: GameObject, sprite: Sprite) {
+  constructor(host: GameObject<unknown>, sprite: Sprite) {
     super(host)
     this._sprite = sprite
   }

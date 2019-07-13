@@ -1,5 +1,6 @@
 import { mergeWhereDefined } from '@gargrave/growbag'
 
+import { GameObjectProps } from '../core/GameObject'
 import { GuiObject } from '../core/GuiObject'
 import { LabelHelpers } from './LabelHelpers'
 
@@ -26,13 +27,15 @@ type RequiredProps = {
   y: number
 }
 
-// Internal config type with all props required (use default values where necessary)
 type RequiredChildProps = { shadowText: OptionalShadowTextProps }
-type Props = RequiredProps & OptionalProps & RequiredChildProps
+type Props = GameObjectProps &
+  RequiredProps &
+  OptionalProps &
+  RequiredChildProps
 
-// External config with appropriate optional props (will use default config as fallback)
 type OptionalChildProps = { shadowText?: Partial<OptionalShadowTextProps> }
-export type LabelProps = RequiredProps &
+export type LabelProps = GameObjectProps &
+  RequiredProps &
   Partial<OptionalProps> &
   OptionalChildProps
 
@@ -49,9 +52,7 @@ const DEFAULT_PROPS: OptionalProps & RequiredChildProps = Object.freeze({
   }),
 })
 
-export class Label extends GuiObject {
-  private readonly _props: Props
-
+export class Label extends GuiObject<Props> {
   /**
    * Whether the text has updated since last frame.
    * If it has, this will trigger a re-draw of the Label.
@@ -62,17 +63,16 @@ export class Label extends GuiObject {
   private _text: string = ''
 
   get text() { return this._text } // prettier-ignore
-  get props() { return this._props } // prettier-ignore
 
   constructor(text: string, props: LabelProps) {
     super()
 
-    // merge props + default props
-    this._props = mergeWhereDefined(DEFAULT_PROPS, props)
-    this._props.shadowText = mergeWhereDefined(
+    const myProps = mergeWhereDefined<Props>(DEFAULT_PROPS, props)
+    myProps.shadowText = mergeWhereDefined(
       DEFAULT_PROPS.shadowText,
       props.shadowText || {},
     )
+    this._props = mergeWhereDefined(this._props, myProps)
 
     // initialize the instance
     const { fontSize, x, y } = this._props

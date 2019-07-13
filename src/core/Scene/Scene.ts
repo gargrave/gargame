@@ -8,12 +8,13 @@ import { Game } from '../Game'
 import { Entity } from '../Entity'
 import { GuiObject } from '../GuiObject'
 import { SceneCollisions } from './SceneCollisions'
+import { GameObject } from '../GameObject'
 
 export const DESTROY_QUEUE_INTERVAL = 1000
 
 export class Scene implements Drawable, Updateable {
   private lastDestroyProcess = 0
-  private guiLayers: { [key: string]: GuiObject[] } = {}
+  private guiLayers: { [key: string]: GuiObject<unknown>[] } = {}
 
   protected _entityMap: { [key: string]: Entity } = {}
   protected _updateableEntities: string[] = []
@@ -101,8 +102,8 @@ export class Scene implements Drawable, Updateable {
     this._destroyQueue.push(entity.id)
   }
 
-  public addGuiObject(go: GuiObject, layer: string = 'default') {
-    const guiLayer = get<GuiObject[]>(this.guiLayers, layer)
+  public addGuiObject<T>(go: GuiObject<T>, layer: string = 'default') {
+    const guiLayer = get<GuiObject<T>[]>(this.guiLayers, layer)
     if (!guiLayer) return
 
     // TODO: ensure go is not already in this layer
@@ -114,18 +115,18 @@ export class Scene implements Drawable, Updateable {
   // ============================================================
   private _baseUpdate(dt: number, updateFn: string) {
     // update all current/active Entities
-    let e: Entity
+    let entity: Entity
     for (const eid of this._updateableEntities) {
-      e = this._entityMap[eid]
-      if (Entity.canUpdate(e, updateFn)) {
-        e[updateFn](dt)
+      entity = this._entityMap[eid]
+      if (GameObject.canUpdate(entity, updateFn)) {
+        entity[updateFn](dt)
       }
     }
 
     // update all active GUI Objects in all layers
     Object.values(this.guiLayers).forEach(guiLayer => {
       for (const go of guiLayer) {
-        if (GuiObject.canUpdate(go, updateFn)) {
+        if (GameObject.canUpdate(go, updateFn)) {
           go[updateFn](dt)
         }
       }
@@ -166,7 +167,7 @@ export class Scene implements Drawable, Updateable {
   }
 
   public drawGuiLayer(layerName: string, ctx: CanvasRenderingContext2D) {
-    const guiObjects = get<GuiObject[]>(this.guiLayers, layerName)
+    const guiObjects = get<GuiObject<unknown>[]>(this.guiLayers, layerName)
     if (!guiObjects) return
 
     if (this.stateHasTransitioned) {

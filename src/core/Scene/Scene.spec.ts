@@ -1,14 +1,16 @@
-import { Entity, EntityConfig } from '../Entity'
+import { Entity, EntityProps } from '../Entity'
 import { Game } from '../Game'
 import { DESTROY_QUEUE_INTERVAL, Scene } from './Scene'
 
 class TestEntity extends Entity {
-  constructor(config: EntityConfig) {
-    super(config)
+  constructor(props: EntityProps) {
+    super(props)
   }
 }
 
-const mockGame = {} as Game // eslint-disable-line
+const mockGame = ({
+  guiLayers: [],
+} as unknown) as Game // eslint-disable-line
 
 describe('Scene', () => {
   let scene: Scene

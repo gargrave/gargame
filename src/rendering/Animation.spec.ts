@@ -3,8 +3,8 @@ import { Entity } from '../core/Entity'
 import { Texture } from '../resources/Texture'
 
 class TestEntity extends Entity {
-  constructor(config = {}) {
-    super(config)
+  constructor(props = {}) {
+    super(props)
   }
 }
 

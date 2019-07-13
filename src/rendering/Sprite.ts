@@ -2,7 +2,7 @@ import { Entity } from '../core/Entity'
 import { Drawable } from '../interfaces/Drawable'
 import { Texture } from '../resources/Texture'
 
-export type SpriteConfig = {
+export type SpriteProps = {
   height: number
   texture: Texture
   width: number
@@ -11,11 +11,11 @@ export type SpriteConfig = {
 }
 
 export class Sprite implements Drawable {
-  constructor(private host: Entity, private config: SpriteConfig) {}
+  constructor(private host: Entity, private props: SpriteProps) {}
 
   public draw(ctx: CanvasRenderingContext2D) {
     const { x: sx, y: sy } = this.host.scale
-    const { height, width } = this.config
+    const { height, width } = this.props
 
     ctx.save()
 
@@ -25,9 +25,9 @@ export class Sprite implements Drawable {
     ctx.scale(sx, sy)
 
     ctx.drawImage(
-      this.config.texture.img,
-      this.config.x || 0, // texture-sub-rect positions
-      this.config.y || 0,
+      this.props.texture.img,
+      this.props.x || 0, // texture-sub-rect positions
+      this.props.y || 0,
       width, // texture sub-rect sizes
       height,
       this.host.pos.x * sx, // canvas draw positions

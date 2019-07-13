@@ -1,4 +1,4 @@
-import { clamp } from '@gargrave/growbag'
+import { clamp, get, mergeWhereDefined } from '@gargrave/growbag'
 
 import { RectCollider } from '../collision/RectCollider'
 import { Behavior } from '../interfaces/Behavior'
@@ -6,23 +6,60 @@ import { Updateable } from '../interfaces/Updateable'
 import { Rect } from '../math/Rect'
 import { Vector } from '../math/Vector'
 
-export type GameObjectConfig = {
-  collisionOffset?: Rect
-  height?: number
-  speed?: number
-  startInactive?: boolean
-  startInvisible?: boolean
-  width?: number
-  x?: number
-  y?: number
-}
-
+/** Partially-applied helper function to clamp min/max value for scale */
 const clampScale = (scale: number) => clamp(-1, 1, scale)
 
-export abstract class GameObject implements Updateable {
+type RequiredProps = {}
+
+type OptionalProps = {
+  collisionOffset: Rect
+  height: number
+  speed: number
+  startInactive: boolean
+  startInvisible: boolean
+  width: number
+  x: number
+  y: number
+}
+
+type Props = RequiredProps & OptionalProps
+export type GameObjectProps = RequiredProps & Partial<OptionalProps>
+
+const DEFAULT_PROPS: OptionalProps = Object.freeze({
+  collisionOffset: new Rect(),
+  height: 0,
+  speed: 0,
+  startInactive: false,
+  startInvisible: false,
+  width: 0,
+  x: 0,
+  y: 0,
+})
+
+export abstract class GameObject<PropsShape> implements Updateable {
+  /**
+   * Returns whether the provided instance can update based on the provided update
+   * function name. Note that this is safe, in that if anything is null/undefined
+   * (even the instance itself), it will simply return false.
+   * @param go
+   * @param updateFn
+   */
+  public static canUpdate<T>(go: GameObject<T>, updateFn: string) {
+    return get(go, 'isActive') && get(go, updateFn)
+  }
+
+  /**
+   * Returns whether the provided instance is in a state that can be drawn.
+   * @param go
+   */
+  public static canDraw<T>(go: GameObject<T>) {
+    return !!go && get(go, 'isActive') && get(go, 'isVisible')
+  }
+
   private static nextId = 0
 
   protected readonly _id: string
+  protected _props: Props & PropsShape
   protected behaviors: Behavior[] = []
 
   protected _width: number = 0
@@ -41,6 +78,7 @@ export abstract class GameObject implements Updateable {
   protected _currentSpeed = new Vector(0, 0)
 
   get id() { return this._id } // prettier-ignore
+  get props() { return this._props } // prettier-ignore
   get width() { return this._width } // prettier-ignore
   get height() { return this._height } // prettier-ignore
   get scale() { return this._scale } // prettier-ignore
@@ -53,17 +91,28 @@ export abstract class GameObject implements Updateable {
   get speed() { return this._speed } // prettier-ignore
   get dirty() { return this._dirty } // prettier-ignore
 
-  protected constructor(config: GameObjectConfig) {
-    const { collisionOffset, height, speed, width, x, y } = config
+  protected constructor(props: GameObjectProps) {
+    this._props = mergeWhereDefined(DEFAULT_PROPS, props) as Props & PropsShape
+
+    const {
+      collisionOffset,
+      height,
+      speed,
+      startInactive,
+      startInvisible,
+      width,
+      x,
+      y,
+    } = this._props
 
     this._id = `${this.constructor.name}__${GameObject.nextId++}` // eslint-disable-line
-    this._width = width || 0
-    this._height = height || 0
-    this._pos = new Vector(x || 0, y || 0)
-    this._prevPos = new Vector(x || 0, y || 0)
-    this._active = config.startInactive !== true
-    this._visible = config.startInvisible !== true
-    this._speed = speed || 0
+    this._width = width
+    this._height = height
+    this._pos = new Vector(x, y)
+    this._prevPos = new Vector(x, y)
+    this._active = !startInactive
+    this._visible = !startInvisible
+    this._speed = speed
 
     this._bounds = new Rect(this.pos.x, this.pos.y, this._width, this._height)
     this._collider = new RectCollider(

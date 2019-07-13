@@ -1,7 +1,7 @@
 import { InputHandler } from '../interfaces/InputHandler'
 import { Keyboard } from './Keyboard'
 
-export type InputConfig = {
+export type InputProps = {
   enableKeyboard?: boolean
 }
 
@@ -10,8 +10,8 @@ export class Input {
 
   private constructor() {}
 
-  public static init(config: InputConfig = {}) {
-    const { enableKeyboard = true } = config
+  public static init(props: InputProps = {}) {
+    const { enableKeyboard = true } = props
 
     Input.controllers = []
     if (enableKeyboard) {

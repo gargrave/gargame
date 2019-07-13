@@ -37,18 +37,20 @@ const DEFAULT_PROPS: OptionalProps = Object.freeze({
 export class Animation implements Drawable, Updateable {
   private readonly wrapFrames: (x: number) => number
 
+  private host: Entity
   private props: Props
   private frames: Sprite[] = []
   private currentFrame: number
   private currentFrameTime: number = 0
 
-  constructor(private host: Entity, props: AnimationProps) {
+  constructor(host: Entity, props: AnimationProps) {
     this.props = mergeWhereDefined(
       DEFAULT_PROPS,
       { lastFrame: props.firstFrame },
       props,
     )
 
+    this.host = host
     this.currentFrame = props.firstFrame
 
     const baseConfig = {

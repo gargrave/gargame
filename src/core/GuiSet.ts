@@ -1,5 +1,6 @@
 import { any, mergeWhereDefined } from '@gargrave/growbag'
 
+import { GameObject, GameObjectProps } from './GameObject'
 import { GuiObject } from './GuiObject'
 import { Globals as gl } from '../Globals'
 
@@ -9,8 +10,10 @@ type OptionalProps = {
   showBackdrop?: boolean
 }
 
-type Props = RequiredProps & OptionalProps
-export type GuiSetProps = RequiredProps & Partial<OptionalProps>
+type Props = GameObjectProps & RequiredProps & OptionalProps
+export type GuiSetProps = GameObjectProps &
+  RequiredProps &
+  Partial<OptionalProps>
 
 const DEFAULT_PROPS: OptionalProps = Object.freeze({
   showBackdrop: false,
@@ -32,13 +35,14 @@ const DEFAULT_PROPS: OptionalProps = Object.freeze({
  * If the parent itself or ANY of the children have dirty state, all children will
  * be updated.
  */
-export class GuiSet extends GuiObject {
-  protected readonly guiSetProps: Props
-  protected children: GuiObject[] = []
+export class GuiSet extends GuiObject<Props> {
+  protected children: GuiObject<Props>[] = []
 
   constructor(props: GuiSetProps) {
     super({})
-    this.guiSetProps = mergeWhereDefined(DEFAULT_PROPS, props)
+
+    const myProps = mergeWhereDefined<Props>(DEFAULT_PROPS, props)
+    this._props = mergeWhereDefined(this._props, myProps)
   }
 
   protected _updateDirtyState() {
@@ -68,7 +72,7 @@ export class GuiSet extends GuiObject {
     super.earlyUpdate(dt)
     // TODO: move "children" handling to base GameObject class
     for (const go of this.children) {
-      if (GuiObject.canUpdate(go, 'earlyUpdate')) {
+      if (GameObject.canUpdate(go, 'earlyUpdate')) {
         go.earlyUpdate(dt)
       }
     }
@@ -77,7 +81,7 @@ export class GuiSet extends GuiObject {
   public update(dt: number) {
     super.update(dt)
     for (const go of this.children) {
-      if (GuiObject.canUpdate(go, 'update')) {
+      if (GameObject.canUpdate(go, 'update')) {
         go.update(dt)
       }
     }
@@ -86,7 +90,7 @@ export class GuiSet extends GuiObject {
   public lateUpdate(dt: number) {
     super.lateUpdate(dt)
     for (const go of this.children) {
-      if (GuiObject.canUpdate(go, 'lateUpdate')) {
+      if (GameObject.canUpdate(go, 'lateUpdate')) {
         go.lateUpdate(dt)
       }
     }
@@ -98,7 +102,7 @@ export class GuiSet extends GuiObject {
   public drawGUI(ctx: CanvasRenderingContext2D) {
     if (!this._dirty) return
 
-    const { showBackdrop } = this.guiSetProps
+    const { showBackdrop } = this._props
 
     ctx.save()
     ctx.clearRect(0, 0, gl.game.width, gl.game.height)
@@ -110,7 +114,7 @@ export class GuiSet extends GuiObject {
     }
 
     for (const go of this.children) {
-      if (GuiObject.canDraw(go)) {
+      if (GameObject.canDraw(go)) {
         go.drawGUI(ctx, true)
       }
     }
