@@ -24,7 +24,7 @@ export class Scene implements Drawable, Updateable {
   protected _collisionHandler: SceneCollisions
 
   protected game: Game
-  protected stateHasTransitioned = false
+  protected needsFullGuiClear = false
 
   get entityMap() { return this._entityMap } // prettier-ignore
   get updateableEntities() { return this._updateableEntities } // prettier-ignore
@@ -150,7 +150,7 @@ export class Scene implements Drawable, Updateable {
       this._processDestroyQueue()
     }
 
-    this.stateHasTransitioned = false
+    this.needsFullGuiClear = false
   }
 
   // ============================================================
@@ -170,7 +170,7 @@ export class Scene implements Drawable, Updateable {
     const guiObjects = get<GuiObject<unknown>[]>(this.guiLayers, layerName)
     if (!guiObjects) return
 
-    if (this.stateHasTransitioned) {
+    if (this.needsFullGuiClear) {
       ctx.clearRect(0, 0, gl.game.width, gl.game.height)
     }
 

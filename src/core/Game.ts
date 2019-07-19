@@ -120,11 +120,7 @@ export class Game {
       id: 'game__default',
     })
 
-    // initialize default + custom GUI contexts/layers
-    this.guiLayerSets.push({
-      ctx: getNewCanvasContext(gameWrapper, w, h, { id: 'gui__default' }),
-      id: 'default',
-    })
+    // initialize all GUI contexts/layers
     for (const guiLayerName of guiLayers) {
       this.guiLayerSets.push({
         ctx: getNewCanvasContext(gameWrapper, w, h, {
