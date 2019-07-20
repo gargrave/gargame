@@ -35,14 +35,14 @@ describe('Scene', () => {
         activeEntity.update = jest.fn()
         activeEntity.lateUpdate = jest.fn()
         activeEntity.draw = jest.fn()
-        scene.add(activeEntity)
+        scene.addEntity(activeEntity)
 
         const inactiveEntity = new TestEntity({ startInactive: true })
         inactiveEntity.earlyUpdate = jest.fn()
         inactiveEntity.update = jest.fn()
         inactiveEntity.lateUpdate = jest.fn()
         inactiveEntity.draw = jest.fn()
-        scene.add(inactiveEntity)
+        scene.addEntity(inactiveEntity)
 
         scene.earlyUpdate(1)
         scene.update(1)
@@ -69,8 +69,8 @@ describe('Scene', () => {
       it('correctly cleans up all destroyed Entity references', () => {
         const e1 = new TestEntity({ collisionGroups: ['cool'] })
         const e2 = new TestEntity({ collisionGroups: ['test'] })
-        scene.add(e1)
-        scene.add(e2)
+        scene.addEntity(e1)
+        scene.addEntity(e2)
 
         expect(Object.entries(scene.entityMap)).toHaveLength(2)
         expect(scene.updateableEntities).toHaveLength(2)

@@ -95,21 +95,6 @@ export class Scene implements Drawable, Updateable {
     this._currentCollisions = {}
   }
 
-  // TODO: rename to addEntity
-  public add(entity: Entity) {
-    this._entityMap[entity.id] = entity
-    this._updateableEntities.push(entity.id)
-
-    const coll = entity.collisionGroups || []
-    coll.forEach(c => {
-      if (!(c in this._collidableEntities)) {
-        this._collidableEntities[c] = []
-      }
-
-      this._collidableEntities[c].push(entity.id)
-    })
-  }
-
   public clear() {
     this._entityMap = {}
     this._updateableEntities = []
@@ -121,6 +106,28 @@ export class Scene implements Drawable, Updateable {
 
   public addToDestroyQueue(entity: Entity) {
     this._destroyQueue.push(entity.id)
+  }
+
+  // ============================================================
+  //  Entity handling
+  // ============================================================
+  /**
+   * Adds the specified Entity to the scene, and makes it immediately updateable.
+   * Also adds the Entity to any collision groups, as specified by its config.
+   * @param entity
+   */
+  public addEntity(entity: Entity) {
+    this._entityMap[entity.id] = entity
+    this._updateableEntities.push(entity.id)
+
+    // add the Entity to any specified collision groups
+    const collGroups = entity.collisionGroups || []
+    for (const collGroup of collGroups) {
+      if (!(collGroup in this._collidableEntities)) {
+        this._collidableEntities[collGroup] = []
+      }
+      this._collidableEntities[collGroup].push(entity.id)
+    }
   }
 
   // ============================================================
