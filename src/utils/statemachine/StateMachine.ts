@@ -63,9 +63,24 @@ export class StateMachine<T> {
   // ============================================================
   //  State mgmt methods
   // ============================================================
-  // TODO: maybe update this to take a Array of state, or a full StateMap
+  /**
+   * Adds a single State to the current state map.
+   * Note that if a state already exists at "key", it will be overwritten.
+   * @param key
+   * @param state
+   */
   public addState(key: string, state: State<T>) {
     this.stateMap[key] = state
+  }
+
+  /**
+   * Adds multiple States to the current state map.
+   * Note that any states that currently exist at the provided keys will be overwritten.
+   * @param stateMap
+   */
+  public addStates(stateMap: StateMap<T>) {
+    const stateAdder = ([key, state]) => this.addState(key, state)
+    Object.entries(stateMap).forEach(stateAdder)
   }
 
   public gotoState(key: string, waitForNextFrame = true) {
@@ -80,6 +95,14 @@ export class StateMachine<T> {
     if (!waitForNextFrame) {
       this._handleStateChange()
     }
+  }
+
+  /**
+   * Returns any current state at `key` or undefined if there is not state at that key.
+   * @param key
+   */
+  public getState(key: string) {
+    return this.stateMap[key]
   }
 
   // ============================================================

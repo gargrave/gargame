@@ -41,6 +41,42 @@ describe('StateMachine', () => {
     sm.gotoState('1', false)
   })
 
+  describe('state adding', () => {
+    it('correctly adds individual states', () => {
+      expect(sm.getState('hi')).toBeUndefined()
+      sm.addState('hi', state1)
+      expect(sm.getState('hi')).toBe(state1)
+
+      // states at the same key will be silently overwritten
+      sm.addState('hi', state2)
+      expect(sm.getState('hi')).toBe(state2)
+    })
+
+    it('correctly adds multiple states', () => {
+      expect(sm.getState('hi')).toBeUndefined()
+      expect(sm.getState('hello')).toBeUndefined()
+
+      sm.addStates({
+        hello: state2,
+        hi: state1,
+      })
+
+      expect(sm.getState('hi')).toBe(state1)
+      expect(sm.getState('hello')).toBe(state2)
+
+      // overwrites existing states at the requested keys, while adding new ones
+      sm.addStates({
+        ahoyhoy: state2,
+        hello: state1,
+        hi: state2,
+      })
+
+      expect(sm.getState('ahoyhoy')).toBe(state2)
+      expect(sm.getState('hi')).toBe(state2)
+      expect(sm.getState('hello')).toBe(state1)
+    })
+  })
+
   describe('gotoState', () => {
     it('ignores state change requests when the state is the same instance', () => {
       const { onStateChanged } = props
