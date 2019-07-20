@@ -38,6 +38,15 @@ const DEFAULT_PROPS: OptionalProps = Object.freeze({
 
 export abstract class GameObject<PropsShape> implements Updateable {
   /**
+   * Instance comparison check for two GameObject instances.
+   * @param a
+   * @param b
+   */
+  public static eq<T>(a: GameObject<T>, b: GameObject<T>) {
+    return a.id === b.id
+  }
+
+  /**
    * Returns whether the provided instance can update based on the provided update
    * function name. Note that this is safe, in that if anything is null/undefined
    * (even the instance itself), it will simply return false.

@@ -93,8 +93,8 @@ export class SceneCollisions {
   }
 
   /**
-   * Performs a manual scan for a collisions between the spcified Entity and `targetGroup`
-   * Returns either the first collisions found, or null if none are found.
+   * Performs a manual scan for a collisions between the specified Entity and `targetGroup`
+   * Returns either the first collision found, or null if none are found.
    * @param entity
    * @param targetGroup
    */

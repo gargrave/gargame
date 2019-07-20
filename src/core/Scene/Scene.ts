@@ -12,6 +12,26 @@ import { GameObject } from '../GameObject'
 
 export const DESTROY_QUEUE_INTERVAL = 1000
 
+// eslint-disable-next-line @typescript-eslint/camelcase
+const err__guiObjectAlreadyInLayer = (
+  go: GuiObject<unknown>,
+  layer: string,
+  existingLayer: string,
+) =>
+  `Failed to add ${go.constructor.name} to GuiLayer "${layer}" because it already exists in layer "${existingLayer}".`
+
+const guiObjectIsInLayer = (
+  go: GuiObject<unknown>,
+  layer: GuiObject<unknown>[],
+): boolean => {
+  for (const other of layer) {
+    if (GameObject.eq(go, other)) {
+      return true
+    }
+  }
+  return false
+}
+
 export class Scene implements Drawable, Updateable {
   private lastDestroyProcess = 0
   private guiLayers: { [key: string]: GuiObject<unknown>[] } = {}
@@ -75,6 +95,7 @@ export class Scene implements Drawable, Updateable {
     this._currentCollisions = {}
   }
 
+  // TODO: rename to addEntity
   public add(entity: Entity) {
     this._entityMap[entity.id] = entity
     this._updateableEntities.push(entity.id)
@@ -102,12 +123,42 @@ export class Scene implements Drawable, Updateable {
     this._destroyQueue.push(entity.id)
   }
 
-  public addGuiObject<T>(go: GuiObject<T>, layer: string = 'default') {
-    const guiLayer = get<GuiObject<T>[]>(this.guiLayers, layer)
-    if (!guiLayer) return
+  // ============================================================
+  //  GuiObject handling
+  // ============================================================
+  /**
+   * Returns the GuiLayer at the specified key, or undefined if it does not exist.
+   * @param key
+   */
+  public getGuiLayer(key: string) {
+    return this.guiLayers[key]
+  }
 
-    // TODO: ensure go is not already in this layer
+  /**
+   * Attempts to add the specified GuiObject to the specified layer.
+   * Will return true if the GuiObject is successfully added.
+   * Will return false if the specified layer does not exist, or if the GuiObject
+   * is already in any GuiLayer.
+   * @param go
+   * @param targetLayer
+   */
+  public addGuiObject<T>(
+    go: GuiObject<T>,
+    targetLayer: string = 'default',
+  ): boolean {
+    const guiLayer = get<GuiObject<T>[]>(this.guiLayers, targetLayer)
+    if (!guiLayer) return false
+
+    // ensure that this GUI Object is not already in ANY layer
+    for (const [layerKey, layer] of Object.entries(this.guiLayers)) {
+      if (guiObjectIsInLayer(go, layer)) {
+        Log.warn(err__guiObjectAlreadyInLayer(go, targetLayer, layerKey))
+        return false
+      }
+    }
+
     guiLayer.push(go)
+    return true
   }
 
   // ============================================================
