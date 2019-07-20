@@ -1,3 +1,4 @@
+import { Loadable } from '../interfaces/Loadable'
 import { Log } from '../utils/Log'
 import { Globals as gl } from '../Globals'
 import { Assets } from './Assets'
@@ -13,25 +14,45 @@ export type AssetQueueMap = {
   textures: AssetList
 }
 
+type LoaderConfig<T> = {
+  onResourceLoaded: (key: string, resource: T) => void
+  resourceList: AssetList
+  resourceLoader: (key, path) => T & Loadable
+  resourceName: string
+}
+
 export class Loader {
   constructor(private assetQueue: AssetQueueMap) {}
 
-  public loadFonts(fonts: AssetList): Promise<boolean> {
-    const expected = Object.keys(fonts).length
+  /**
+   * Generic loader method for all resource types.
+   * @param onResourceLoaded
+   * @param resourceList
+   * @param resourceLoader
+   * @param resourceName
+   */
+  private _loadResources<T>({
+    onResourceLoaded,
+    resourceList,
+    resourceLoader,
+    resourceName,
+  }: LoaderConfig<T>) {
+    const expected = Object.keys(resourceList).length
     let loaded = 0
-
-    Log.info(`Loading ${expected} fonts...`)
+    Log.info(`Loading ${expected} ${resourceName}s...`)
 
     return new Promise<boolean>(async (resolve, reject) => {
-      Object.entries(fonts).forEach(([key, path]) => {
-        const font = new Font(key, path)
-        font
+      Object.entries(resourceList).forEach(([key, path]) => {
+        const res = resourceLoader(key, path)
+        res
           .load()
           .then(() => {
-            Assets.addFont(key, font)
+            onResourceLoaded(key, res)
           })
           .catch(err => {
-            Log.warn(`Error loading font resource @ "${path}" :: ${err}`)
+            Log.warn(
+              `Error loading ${resourceName} resource @ "${path}" :: ${err}`,
+            )
           })
           .finally(() => {
             loaded += 1
@@ -41,65 +62,49 @@ export class Loader {
           })
       })
     })
+  }
+
+  public loadFonts(fonts: AssetList): Promise<boolean> {
+    const loaderConfig: LoaderConfig<Font> = {
+      onResourceLoaded: (key, font) => {
+        Assets.addFont(key, font)
+      },
+      resourceList: fonts,
+      resourceLoader: (key, path) => new Font(key, path),
+      resourceName: 'font',
+    }
+    return this._loadResources(loaderConfig)
   }
 
   public loadSounds(sounds: AssetList): Promise<boolean> {
     if (!gl.settings.enableSound) {
+      Log.info(
+        'No sound resources loaded because sound is disabled in game settings...',
+      )
       return Promise.resolve(true)
     }
 
-    const expected = Object.keys(sounds).length
-    let loaded = 0
-
-    Log.info(`Loading ${expected} sounds...`)
-
-    return new Promise<boolean>(async (resolve, reject) => {
-      Object.entries(sounds).forEach(([key, path]) => {
-        const sound = new SoundFile(path)
-        sound
-          .load()
-          .then(() => {
-            Assets.addSound(key, sound)
-          })
-          .catch(err => {
-            Log.warn(`Error loading sound resource @ "${path}" :: ${err}`)
-          })
-          .finally(() => {
-            loaded += 1
-            if (loaded === expected) {
-              resolve(true)
-            }
-          })
-      })
-    })
+    const loaderConfig: LoaderConfig<SoundFile> = {
+      onResourceLoaded: (key, sound) => {
+        Assets.addSound(key, sound)
+      },
+      resourceList: sounds,
+      resourceLoader: (key, path) => new SoundFile(path),
+      resourceName: 'sound',
+    }
+    return this._loadResources(loaderConfig)
   }
 
-  // TODO: these loading methods can probably be abstracted into one
   public loadTextures(textures: AssetList): Promise<boolean> {
-    const expected = Object.keys(textures).length
-    let loaded = 0
-
-    Log.info(`Loading ${expected} textures...`)
-
-    return new Promise<boolean>((resolve, reject) => {
-      Object.entries(textures).forEach(([key, path]) => {
-        const texture = new Texture(path)
-        texture
-          .load()
-          .then(() => {
-            Assets.addTexture(key, texture)
-          })
-          .catch(err => {
-            Log.warn(`Error loading texture resource @ "${path}" :: ${err}`)
-          })
-          .finally(() => {
-            loaded += 1
-            if (loaded === expected) {
-              resolve(true)
-            }
-          })
-      })
-    })
+    const loaderConfig: LoaderConfig<Texture> = {
+      onResourceLoaded: (key, texture) => {
+        Assets.addTexture(key, texture)
+      },
+      resourceList: textures,
+      resourceLoader: (key, path) => new Texture(path),
+      resourceName: 'texture',
+    }
+    return this._loadResources(loaderConfig)
   }
 
   public loadAll() {
